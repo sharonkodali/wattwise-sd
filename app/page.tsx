@@ -1,4 +1,4 @@
-// Tabs shell. OWNER: Person 2.
+import { ArrowUpRight, Leaf, MapPin } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BillAnalyzer } from "@/components/BillAnalyzer";
 import { WhenToUsePower } from "@/components/when-to-use-power/WhenToUsePower";
@@ -6,40 +6,39 @@ import { AskWattWise } from "@/components/AskWattWise";
 
 export default function Home() {
   return (
-    <div className="min-h-full bg-[radial-gradient(ellipse_at_top,oklch(0.9_0.045_220),transparent_55%),radial-gradient(ellipse_at_bottom_right,oklch(0.92_0.07_70),transparent_48%)]">
-      <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10">
-        <header className="mb-6">
-          <p className="text-xs font-semibold tracking-[0.2em] text-primary uppercase">San Diego</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">WattWise SD</h1>
-          <p className="mt-2 max-w-xl text-base text-muted-foreground">
-            Understand your SDG&amp;E bill, find the expensive hours, and keep more of your money.
-          </p>
-        </header>
-        <Tabs defaultValue="bill" className="gap-4">
-          <TabsList className="grid h-11! w-full grid-cols-3">
-            <TabsTrigger value="bill" className="px-1 text-xs sm:text-sm">
-              <span className="sm:hidden">Bill</span>
-              <span className="hidden sm:inline">Bill Analyzer</span>
-            </TabsTrigger>
-            <TabsTrigger value="when" className="px-1 text-xs sm:text-sm">
-              <span className="sm:hidden">Hours</span>
-              <span className="hidden sm:inline">When to Use Power</span>
-            </TabsTrigger>
-            <TabsTrigger value="ask" className="px-1 text-xs sm:text-sm">
-              <span className="sm:hidden">Ask</span>
-              <span className="hidden sm:inline">Ask WattWise</span>
-            </TabsTrigger>
+    <div className="app-shell min-h-screen">
+      <header className="topbar">
+        <a href="#home" className="brand-lockup" aria-label="WattSplit home">
+          <span className="brand-mark"><Leaf size={18} strokeWidth={2.2} aria-hidden /></span>
+          <span>Watt<span className="brand-light">Split</span></span>
+        </a>
+        <div className="location-label"><MapPin size={14} aria-hidden /> San Diego, CA</div>
+      </header>
+
+      <main id="home" className="dashboard-main">
+        <div className="welcome-row">
+          <div>
+            <p className="eyebrow">YOUR HOME ENERGY, MADE CLEAR</p>
+            <h1>Good energy starts here.</h1>
+            <p className="welcome-copy">A clearer look at your SDG&amp;E bill, your habits, and what you can save together.</p>
+          </div>
+          <a className="utility-link" href="https://www.sdge.com/residential/pay-bill/get-payment-bill-assistance" target="_blank" rel="noreferrer">
+            Need bill assistance? <ArrowUpRight size={15} aria-hidden />
+          </a>
+        </div>
+
+        <Tabs defaultValue="bill" className="dashboard-tabs">
+          <TabsList className="nav-tabs">
+            <TabsTrigger value="bill">Bill overview</TabsTrigger>
+            <TabsTrigger value="when">Best time to use power</TabsTrigger>
+            <TabsTrigger value="ask">Ask WattSplit</TabsTrigger>
           </TabsList>
-          <TabsContent value="bill">
-            <BillAnalyzer />
-          </TabsContent>
-          <TabsContent value="when">
-            <WhenToUsePower />
-          </TabsContent>
-          <TabsContent value="ask">
-            <AskWattWise />
-          </TabsContent>
+          <TabsContent value="bill"><BillAnalyzer /></TabsContent>
+          <TabsContent value="when"><WhenToUsePower /></TabsContent>
+          <TabsContent value="ask"><AskWattWise /></TabsContent>
         </Tabs>
+
+        <footer className="page-footer"><span>Made for San Diego households</span><span>Clear bills. Fair splits. Lighter living.</span></footer>
       </main>
     </div>
   );

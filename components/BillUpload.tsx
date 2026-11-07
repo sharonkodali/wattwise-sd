@@ -25,9 +25,9 @@ export function BillUpload({ loading, error, onFile, onSample }: BillUploadProps
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Upload your SDG&amp;E bill</CardTitle>
-        <CardDescription>PDF or a photo from your phone. We explain every charge in plain English.</CardDescription>
+      <CardHeader className="upload-header">
+        <CardTitle>Bring your bill into focus</CardTitle>
+        <CardDescription>Upload an SDG&amp;E statement and we’ll explain each charge in plain English.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         <button
@@ -48,7 +48,7 @@ export function BillUpload({ loading, error, onFile, onSample }: BillUploadProps
             setDragging(false);
             take(e.dataTransfer.files?.[0]);
           }}
-          className={`flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-10 text-center transition-colors disabled:opacity-60 ${
+          className={`upload-target flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors disabled:opacity-60 ${
             dragging ? "border-primary bg-primary/10" : "border-primary/30 bg-secondary/60 hover:border-primary/60"
           }`}
         >
