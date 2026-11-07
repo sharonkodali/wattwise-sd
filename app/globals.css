@@ -100,11 +100,36 @@
 [data-slot="card"] { border: 1px solid #e8e7df; border-radius: 13px; box-shadow: 0 2px 8px rgba(29, 51, 40, .035); }
 [data-slot="card-title"] { color: #123b35; }
 [data-slot="card-description"] { color: #68736c; }
-.upload-header { padding-bottom: 3px; }
-.upload-header [data-slot="card-title"] { font-size: 17px; font-weight: 600; }
-.upload-header [data-slot="card-description"] { font-size: 12px; }
-.upload-target { border-color: #b8cbbd; background: #f5f8f3; }
-.upload-target:hover, .upload-target:focus-visible { border-color: #527b66; background: #edf5ee; }
+.upload-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 20px 22px 14px; }
+.upload-header [data-slot="card-title"] { font-family: var(--font-neuton), Georgia, serif; font-size: 24px; font-weight: 400; letter-spacing: -.02em; }
+.upload-header [data-slot="card-description"] { margin-top: 4px; font-size: 13px; }
+.upload-safe { padding: 7px 10px; border-radius: 99px; background: #eef5ee; color: #426b56; font-size: 11px; white-space: nowrap; }
+.upload-target { display: flex; width: 100%; min-height: 150px; flex-direction: column; align-items: center; justify-content: center; gap: 9px; padding: 22px; border: 1.5px dashed #a9c3af; border-radius: 12px; background: #f7faf6; color: #123b35; cursor: pointer; transition: .18s ease; }
+.upload-target:hover, .upload-target:focus-visible, .upload-target.is-dragging { border-color: #527b66; background: #edf5ee; outline: none; }
+.upload-target:disabled { cursor: wait; opacity: .72; }
+.upload-icon { display: grid; width: 37px; height: 37px; place-items: center; border-radius: 11px; background: #e5f1e6; color: #2e654d; }
+.upload-icon svg { width: 19px; height: 19px; }
+.upload-copy { display: grid; gap: 3px; text-align: center; }
+.upload-copy strong { color: #123b35; font-size: 14px; font-weight: 600; }
+.upload-copy span { color: #77837a; font-size: 12px; }
+.upload-copy u { color: #286247; font-weight: 600; text-underline-offset: 2px; }
+.upload-formats { display: inline-flex; align-items: center; gap: 8px; color: #879188; font-size: 10px; }
+.upload-formats i { width: 3px; height: 3px; border-radius: 50%; background: #a6afa7; }
+.upload-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 1px; }
+.upload-bottom p { margin: 0; color: #8a948b; font-size: 11px; }
+.sample-button { height: 34px; padding: 0 13px; border-color: #d9e0d9; color: #315b48; font-size: 12px; }
+.total-card [data-slot="card-content"] { padding: 22px 24px; }
+.total-card p { color: #fff !important; }
+.total-card p:first-child { font-size: 12px; letter-spacing: .03em; }
+.total-card p:nth-child(2) { color: #fff !important; font-size: clamp(46px, 6vw, 62px); font-weight: 500; line-height: 1; }
+.total-card p:last-child { color: #c8dcd2 !important; font-size: 11px; }
+.dashboard-tabs [data-slot="tabs-content"] { padding-top: 8px; }
+.dashboard-main { max-width: 1000px; padding-top: 36px; }
+.welcome-row { margin-bottom: 22px; }
+.insight-strip { padding: 13px 18px; }
+.tip-card { border-color: #f0dfb8 !important; }
+.tip-card [data-slot="card-content"], .breakdown-card [data-slot="card-content"] { padding-top: 19px; padding-bottom: 19px; }
+.page-footer { margin-top: 24px; }
 .page-footer { display: flex; justify-content: space-between; gap: 12px; margin-top: 31px; padding-top: 15px; border-top: 1px solid #e5e3da; color: #849087; font-size: 11px; }
 .total-card { background: #123b35; }
 .sample-status { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border: 1px solid #e2e4da; border-radius: 999px; color: #68736c; white-space: nowrap; }
@@ -152,4 +177,8 @@
   .page-footer { flex-direction: column; gap: 4px; }
   .insight-strip { grid-template-columns: 1fr; gap: 11px; padding: 13px 14px; }
   .insight-item strong { font-size: 13px; }
+  .upload-header { align-items: flex-start; padding: 16px 16px 11px; }
+  .upload-safe { font-size: 9px; }
+  .upload-bottom { align-items: flex-start; flex-direction: column; }
+  .total-card [data-slot="card-content"] { min-height: 170px; padding: 20px; }
 }

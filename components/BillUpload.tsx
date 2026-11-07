@@ -26,8 +26,9 @@ export function BillUpload({ loading, error, onFile, onSample }: BillUploadProps
   return (
     <Card>
       <CardHeader className="upload-header">
-        <CardTitle>Bring your bill into focus</CardTitle>
-        <CardDescription>Upload an SDG&amp;E statement and we’ll explain each charge in plain English.</CardDescription>
+        <div><CardTitle>Bring your bill into focus</CardTitle>
+        <CardDescription>Upload an SDG&amp;E statement and we’ll explain each charge in plain English.</CardDescription></div>
+        <span className="upload-safe">Private &amp; secure</span>
       </CardHeader>
       <CardContent className="space-y-3">
         <button
@@ -48,19 +49,13 @@ export function BillUpload({ loading, error, onFile, onSample }: BillUploadProps
             setDragging(false);
             take(e.dataTransfer.files?.[0]);
           }}
-          className={`upload-target flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors disabled:opacity-60 ${
+          className={`upload-target ${dragging ? "is-dragging" : ""} ${busy ? "is-busy" : ""} ${
             dragging ? "border-primary bg-primary/10" : "border-primary/30 bg-secondary/60 hover:border-primary/60"
           }`}
         >
-          {busy ? (
-            <Loader2 className="size-8 animate-spin text-primary" aria-hidden />
-          ) : (
-            <FileUp className="size-8 text-primary" aria-hidden />
-          )}
-          <span className="text-base font-medium text-foreground">
-            {busy ? loading : "Drop a bill here, or tap to choose a file"}
-          </span>
-          <span className="text-sm text-muted-foreground">PDF, JPG, or PNG · up to 15 MB</span>
+          <span className="upload-icon">{busy ? <Loader2 className="animate-spin" aria-hidden /> : <FileUp aria-hidden />}</span>
+          <span className="upload-copy"><strong>{busy ? loading : "Drop your bill here"}</strong><span>or <u>browse files</u> from this device</span></span>
+          <span className="upload-formats">PDF, JPG, PNG or HEIC <i /> Up to 15 MB</span>
         </button>
         <input
           ref={inputRef}
@@ -72,11 +67,11 @@ export function BillUpload({ loading, error, onFile, onSample }: BillUploadProps
             e.target.value = "";
           }}
         />
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <Button type="button" variant="outline" disabled={busy} onClick={onSample} className="w-full sm:w-auto">
-            Preview with sample bill
+        <div className="upload-bottom">
+          <Button type="button" variant="outline" disabled={busy} onClick={onSample} className="sample-button">
+            Explore with a sample bill
           </Button>
-          <p className="text-xs text-muted-foreground">Sample numbers are made up, for layout only.</p>
+          <p>Sample figures are illustrative.</p>
         </div>
         {error && (
           <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
