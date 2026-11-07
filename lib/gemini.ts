@@ -1,7 +1,7 @@
 // Gemini client + helper. OWNER: Person 1. Server-only: never import this in a "use client" file.
 import { GoogleGenAI, type Part } from "@google/genai";
 
-export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash"; // check AI Studio for the newest Flash model
+export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.8-flash"; // newest Flash model available as of Nov 7, 2026
 
 let client: GoogleGenAI | null = null;
 function getClient() {
