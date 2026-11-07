@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WattSplit | San Diego energy, made clear",
-  description: "Understand your SDG&E bill and cut your San Diego electricity costs",
+  title: "WattWise SD | San Diego energy, made clear",
+  description: "Understand your SDG&E bill and lower your San Diego electricity costs",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

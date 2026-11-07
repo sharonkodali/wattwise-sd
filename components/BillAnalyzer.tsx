@@ -107,13 +107,25 @@ export function BillAnalyzer() {
 
           <div className="grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
             <Card className="total-card border-0 text-primary-foreground">
-              <CardContent className="flex h-full min-h-52 flex-col justify-between gap-7 py-2">
+              <CardContent className="flex h-full min-h-52 flex-col justify-between gap-4 py-3">
                 <div>
                   <p className="text-sm text-primary-foreground/75">Monthly bill · total due</p>
                   <p dir="ltr" className="mt-2 text-5xl font-semibold tracking-tight tabular-nums sm:text-6xl">
-                  {formatUsd(bill.totalDue)}
+                    {formatUsd(bill.totalDue)}
                   </p>
                 </div>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-xl border border-white/10 bg-white/5 p-2.5">
+                    <p className="text-[10px] uppercase tracking-[0.12em] text-primary-foreground/70">Peak use</p>
+                    <p className="mt-1 text-base font-semibold text-white">{peakShare}% of kWh</p>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-white/5 p-2.5">
+                    <p className="text-[10px] uppercase tracking-[0.12em] text-primary-foreground/70">Provider</p>
+                    <p className="mt-1 text-base font-semibold text-white">{provider}</p>
+                  </div>
+                </div>
+
                 <p className="text-xs text-primary-foreground/75">
                   {bill.billingPeriod} · {bill.ratePlan} · {provider}
                 </p>

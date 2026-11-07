@@ -22,6 +22,18 @@ const EXAMPLES = [
   },
 ];
 
+function renderHintWithLinks(text: string) {
+  const tokens = text.split(/(https?:\/\/[^\s]+)/g);
+  return tokens.map((token, index) => {
+    if (!token.startsWith("http")) return <span key={`${token}-${index}`}>{token}</span>;
+    return (
+      <a key={`${token}-${index}`} href={token} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-medium text-primary underline-offset-2 hover:underline">
+        {token}
+      </a>
+    );
+  });
+}
+
 export function AskWattWise() {
   const [text, setText] = useState("");
   const [result, setResult] = useState<AskResult | null>(null);
@@ -73,21 +85,41 @@ export function AskWattWise() {
           {error && <p className="text-sm text-red-600">{error}</p>}
         </CardContent>
       </Card>
+      {loading && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Planning your savings</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+            <div className="space-y-2">
+              <div className="h-3 w-full animate-pulse rounded bg-muted" />
+              <div className="h-3 w-5/6 animate-pulse rounded bg-muted" />
+              <div className="h-3 w-4/5 animate-pulse rounded bg-muted" />
+            </div>
+            <div className="h-16 w-full animate-pulse rounded-md bg-muted" />
+          </CardContent>
+        </Card>
+      )}
       {result && (
         <Card>
           <CardHeader>
             <CardTitle>Your plan · {result.savingsEstimate}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {result.plan.map((p, i) => (
-              <div key={i}>
-                <p className="font-medium">{p.habit}</p>
-                <p className="text-sm">
-                  {p.why} <b>Fix:</b> {p.fix}
-                </p>
-              </div>
-            ))}
-            <p className="rounded-md bg-muted p-3 text-sm">{result.careHint}</p>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              {result.plan.map((p, i) => (
+                <div key={i} className="rounded-md border border-border bg-muted/30 p-3">
+                  <p className="font-medium text-foreground">{p.habit}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    {p.why} <span className="font-semibold text-foreground">Fix:</span> {p.fix}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-md border border-border bg-muted/30 p-3 text-sm leading-relaxed text-foreground">
+              {renderHintWithLinks(result.careHint)}
+            </div>
             <p className="text-xs text-muted-foreground">Estimates only, not financial advice.</p>
           </CardContent>
         </Card>
