@@ -102,6 +102,8 @@ Cut list if behind (in order): Tab 2 CAISO chart → Tab 3 CARE hint → extra l
 Include the actual prompts in `docs/GEMINI_USAGE.md`.
 
 ## How we use GitHub Copilot (for README `## How we used GitHub Copilot`)
+**Start here: [`COPILOT_PLAYBOOK.md`](COPILOT_PLAYBOOK.md)** — setup, features, and Copilot tasks for each person.
+
 Log template per entry in `docs/COPILOT_LOG.md`:
 `Who | Copilot mode (agent / chat / inline / tests) | What we asked | What it produced | What we changed | Time saved est.`
 Aim for ~3 entries per person, e.g.: agent mode scaffolded the tab layout; chat wrote the CSV parser for the OpenEI file; inline completed TOU hour-mapping; chat debugged Gemini JSON parse error; Copilot generated unit tests for `analysis.ts`; Copilot explained Recharts props. Screenshot 2–3 of these for a pitch slide.
