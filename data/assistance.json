@@ -1,5 +1,24 @@
 {
-  "_note": "SAMPLE PLACEHOLDER. Person 3/4: replace with current numbers from sdge.com CARE and FERA pages.",
-  "CARE": { "discount": "about 30-35% off electricity, 20% off gas", "apply": "https://www.sdge.com/care", "autoQualify": ["CalFresh", "Medi-Cal", "WIC", "SSI"] },
-  "FERA": { "discount": "about 18% off electricity", "apply": "https://www.sdge.com/fera", "householdMin": 3 }
+  "effective": "2026-06-01 to 2027-05-31",
+  "source": "https://www.cpuc.ca.gov/industries-and-topics/electrical-energy/electric-costs/care-fera-program",
+  "incomeType": "Gross annual household income, all members, all taxable and non-taxable sources",
+  "programs": {
+    "CARE": {
+      "name": "California Alternate Rates for Energy",
+      "benefit": "About 35% off electricity (on TOU-DR1) and 20% off gas",
+      "applyUrl": "https://www.sdge.com/CARE",
+      "maxIncomeByHouseholdSize": { "1": 43281, "2": 43281, "3": 54641, "4": 66001, "5": 77361, "6": 88721 },
+      "perAdditionalPerson": 11360,
+      "categoricalEligibility": ["CalFresh/SNAP", "Medi-Cal", "SSI", "WIC", "CalWORKs/TANF", "LIHEAP", "Head Start (income-based)", "National School Lunch Program", "Tribal TANF", "Bureau of Indian Affairs General Assistance"],
+      "categoricalNote": "Enrolling in one of these programs can qualify a household without an income check. Confirm the current list on the SDG&E CARE page."
+    },
+    "FERA": {
+      "name": "Family Electric Rate Assistance",
+      "benefit": "18% off the electric bill",
+      "applyUrl": "https://www.sdge.com/FERA",
+      "minHouseholdSize": 3,
+      "maxIncomeByHouseholdSize": { "3": 68300, "4": 82500, "5": 96700, "6": 110900 },
+      "note": "For households of 3 or more whose income is above the CARE limit but at or below the FERA limit. Check SDG&E for 7+ person limits."
+    }
+  }
 }

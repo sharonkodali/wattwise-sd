@@ -1,7 +1,7 @@
 // Tabs shell. OWNER: Person 2.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BillAnalyzer } from "@/components/BillAnalyzer";
-import { WhenToUsePower } from "@/components/WhenToUsePower";
+import { WhenToUsePower } from "@/components/when-to-use-power/WhenToUsePower";
 import { AskWattWise } from "@/components/AskWattWise";
 
 export default function Home() {

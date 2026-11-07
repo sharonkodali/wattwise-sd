@@ -1,0 +1,227 @@
+{
+  "source": "CAISO Today's Outlook (demand.csv + fuelsource.csv), 5-minute data averaged by hour",
+  "sourceUrls": [
+    "https://www.caiso.com/outlook/history/20261106/demand.csv",
+    "https://www.caiso.com/outlook/history/20261106/fuelsource.csv"
+  ],
+  "date": "2026-11-06",
+  "renewablesNote": "Renewables = solar, wind, geothermal, biomass, biogas, small hydro (large hydro excluded). Share = renewables / demand, capped at 100% (midday surplus charges batteries or is exported).",
+  "hours": [
+    {
+      "hour": 0,
+      "demandMW": 21971,
+      "renewablesMW": 1909,
+      "renewablesPct": 8.7,
+      "solarMW": 0,
+      "windMW": 681,
+      "naturalGasMW": 11394
+    },
+    {
+      "hour": 1,
+      "demandMW": 21116,
+      "renewablesMW": 1890,
+      "renewablesPct": 8.9,
+      "solarMW": 0,
+      "windMW": 659,
+      "naturalGasMW": 11500
+    },
+    {
+      "hour": 2,
+      "demandMW": 20423,
+      "renewablesMW": 1940,
+      "renewablesPct": 9.5,
+      "solarMW": 0,
+      "windMW": 704,
+      "naturalGasMW": 11520
+    },
+    {
+      "hour": 3,
+      "demandMW": 20122,
+      "renewablesMW": 2149,
+      "renewablesPct": 10.7,
+      "solarMW": 0,
+      "windMW": 908,
+      "naturalGasMW": 11496
+    },
+    {
+      "hour": 4,
+      "demandMW": 20434,
+      "renewablesMW": 2139,
+      "renewablesPct": 10.5,
+      "solarMW": 0,
+      "windMW": 897,
+      "naturalGasMW": 11341
+    },
+    {
+      "hour": 5,
+      "demandMW": 21505,
+      "renewablesMW": 2159,
+      "renewablesPct": 10.0,
+      "solarMW": 0,
+      "windMW": 915,
+      "naturalGasMW": 11545
+    },
+    {
+      "hour": 6,
+      "demandMW": 23016,
+      "renewablesMW": 3125,
+      "renewablesPct": 13.6,
+      "solarMW": 1061,
+      "windMW": 820,
+      "naturalGasMW": 11929
+    },
+    {
+      "hour": 7,
+      "demandMW": 23164,
+      "renewablesMW": 11751,
+      "renewablesPct": 50.7,
+      "solarMW": 9775,
+      "windMW": 740,
+      "naturalGasMW": 9098
+    },
+    {
+      "hour": 8,
+      "demandMW": 21689,
+      "renewablesMW": 19369,
+      "renewablesPct": 89.3,
+      "solarMW": 17129,
+      "windMW": 1008,
+      "naturalGasMW": 5577
+    },
+    {
+      "hour": 9,
+      "demandMW": 20180,
+      "renewablesMW": 21294,
+      "renewablesPct": 100.0,
+      "solarMW": 18560,
+      "windMW": 1508,
+      "naturalGasMW": 4857
+    },
+    {
+      "hour": 10,
+      "demandMW": 19210,
+      "renewablesMW": 21302,
+      "renewablesPct": 100.0,
+      "solarMW": 18351,
+      "windMW": 1737,
+      "naturalGasMW": 4807
+    },
+    {
+      "hour": 11,
+      "demandMW": 18760,
+      "renewablesMW": 21247,
+      "renewablesPct": 100.0,
+      "solarMW": 18383,
+      "windMW": 1664,
+      "naturalGasMW": 5002
+    },
+    {
+      "hour": 12,
+      "demandMW": 19093,
+      "renewablesMW": 21364,
+      "renewablesPct": 100.0,
+      "solarMW": 18594,
+      "windMW": 1577,
+      "naturalGasMW": 5186
+    },
+    {
+      "hour": 13,
+      "demandMW": 20344,
+      "renewablesMW": 21408,
+      "renewablesPct": 100.0,
+      "solarMW": 18629,
+      "windMW": 1583,
+      "naturalGasMW": 5208
+    },
+    {
+      "hour": 14,
+      "demandMW": 22236,
+      "renewablesMW": 20512,
+      "renewablesPct": 92.2,
+      "solarMW": 17658,
+      "windMW": 1645,
+      "naturalGasMW": 5521
+    },
+    {
+      "hour": 15,
+      "demandMW": 24398,
+      "renewablesMW": 14432,
+      "renewablesPct": 59.1,
+      "solarMW": 11718,
+      "windMW": 1489,
+      "naturalGasMW": 7910
+    },
+    {
+      "hour": 16,
+      "demandMW": 26450,
+      "renewablesMW": 4806,
+      "renewablesPct": 18.2,
+      "solarMW": 2266,
+      "windMW": 1306,
+      "naturalGasMW": 10722
+    },
+    {
+      "hour": 17,
+      "demandMW": 27506,
+      "renewablesMW": 2272,
+      "renewablesPct": 8.3,
+      "solarMW": 1,
+      "windMW": 1036,
+      "naturalGasMW": 11417
+    },
+    {
+      "hour": 18,
+      "demandMW": 26987,
+      "renewablesMW": 2061,
+      "renewablesPct": 7.6,
+      "solarMW": 0,
+      "windMW": 826,
+      "naturalGasMW": 11182
+    },
+    {
+      "hour": 19,
+      "demandMW": 26204,
+      "renewablesMW": 2076,
+      "renewablesPct": 7.9,
+      "solarMW": 0,
+      "windMW": 839,
+      "naturalGasMW": 11276
+    },
+    {
+      "hour": 20,
+      "demandMW": 25418,
+      "renewablesMW": 2177,
+      "renewablesPct": 8.6,
+      "solarMW": 0,
+      "windMW": 942,
+      "naturalGasMW": 11054
+    },
+    {
+      "hour": 21,
+      "demandMW": 24977,
+      "renewablesMW": 2243,
+      "renewablesPct": 9.0,
+      "solarMW": 0,
+      "windMW": 1004,
+      "naturalGasMW": 10890
+    },
+    {
+      "hour": 22,
+      "demandMW": 23955,
+      "renewablesMW": 2377,
+      "renewablesPct": 9.9,
+      "solarMW": 0,
+      "windMW": 1151,
+      "naturalGasMW": 10556
+    },
+    {
+      "hour": 23,
+      "demandMW": 22633,
+      "renewablesMW": 2357,
+      "renewablesPct": 10.4,
+      "solarMW": 0,
+      "windMW": 1148,
+      "naturalGasMW": 10332
+    }
+  ]
+}
