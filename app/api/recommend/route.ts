@@ -4,11 +4,11 @@
 // then overwrites any dollar amount in Gemini's answer with the computed value.
 
 import { NextResponse } from "next/server";
-import { GoogleGenAI, Type } from "@google/genai";
+import { generateJson } from "@/lib/gemini";
 import { buildRecommendationInput, money, type Plan, type RecommendationInput, type Season } from "@/lib/analysis";
 
-export const runtime = "nodejs";
-export const maxDuration = 60;
+// Note: no `runtime` export — it isn't allowed with `cacheComponents` in next.config.ts (Node.js is the default).
+export const maxDuration = 120;
 
 export interface Recommendation {
   /** Scenario id from lib/analysis, "general_shift", "care", or null for a no-dollar tip. */
@@ -19,29 +19,26 @@ export interface Recommendation {
   monthlySavings: number | null;
 }
 
-// Check AI Studio for the current Flash model ID and set GEMINI_MODEL in Vercel if this one is outdated.
-const MODEL = process.env.GEMINI_MODEL ?? "gemini-flash-latest";
-
+// Model, timeouts, retries and fallback models come from generateJson() in lib/gemini.ts.
 const responseSchema = {
-  type: Type.OBJECT,
+  type: "object",
   properties: {
     recommendations: {
-      type: Type.ARRAY,
+      type: "array",
       description: "3 to 5 tips",
       items: {
-        type: Type.OBJECT,
+        type: "object",
         properties: {
-          scenarioId: { type: Type.STRING, nullable: true, description: "id from the input, 'general_shift', 'care', or null" },
-          title: { type: Type.STRING, description: "Short imperative, max 8 words, no dollar amounts" },
-          detail: { type: Type.STRING, description: "1-2 friendly sentences. Use {{savings}} where the monthly dollar amount goes." },
+          scenarioId: { type: ["string", "null"], description: "id from the input, 'general_shift', 'care', or null" },
+          title: { type: "string", description: "Short imperative, max 8 words, no dollar amounts" },
+          detail: { type: "string", description: "1-2 friendly sentences. Use {{savings}} where the monthly dollar amount goes." },
         },
         required: ["scenarioId", "title", "detail"],
-        propertyOrdering: ["scenarioId", "title", "detail"],
       },
     },
   },
   required: ["recommendations"],
-};
+} as const;
 
 function buildPrompt(input: RecommendationInput): string {
   return `You are WattWise SD, a friendly energy coach for San Diego households on SDG&E's TOU-DR1 time-of-use plan.
@@ -52,6 +49,8 @@ Write 3 to 5 specific, practical tips using ONLY the numbers in the JSON below. 
 - Prefer the scenarios with the biggest savings. Don't repeat the same appliance twice.
 - Mention the time window to move to (e.g. "after 9 PM", "Saturday morning").
 - Plain language a student or a non-expert can follow. No jargon.
+- Never tell people to wake up at night to run appliances; suggest delay-start timers instead.
+- Never suggest turning off cooling for older adults or anyone at health risk in hot weather; suggest pre-cooling.
 
 Data:
 ${JSON.stringify(input, null, 2)}`;
@@ -115,13 +114,11 @@ export async function POST(req: Request) {
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const res = await ai.models.generateContent({
-      model: MODEL,
-      contents: buildPrompt(input),
-      config: { responseMimeType: "application/json", responseSchema, temperature: 0.4 },
+    const parsed = await generateJson<{ recommendations?: { scenarioId: string | null; title: string; detail: string }[] }>({
+      system: buildPrompt(input),
+      parts: [{ text: "Write the tips." }],
+      schema: responseSchema,
     });
-    const parsed = JSON.parse(res.text ?? "{}") as { recommendations?: { scenarioId: string | null; title: string; detail: string }[] };
     const recs = attachNumbers(parsed.recommendations ?? [], input);
     if (recs.length < 3) throw new Error(`Only ${recs.length} usable tips`);
     return NextResponse.json({ recommendations: recs, source: "gemini" });

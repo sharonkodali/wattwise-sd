@@ -36,8 +36,11 @@ to `gemini-3.1-flash-lite` and `gemini-3.6-flash` if Gemini is busy. Override wi
   not an already-translated version. Repeat requests are cached (instant).
 
 ## `POST /api/recommend` — tips for Tab 2 (Person 3)
-- **Body:** `{ "stats": ReturnType<typeof usageStats> }` from `lib/analysis.ts`.
-- **200:** `{ "recommendations": [{ "title", "detail", "monthlySavings?" }] }`
+- **Body:** `{ "season": "summer" | "winter", "plan": "standard" | "care", "dailyKwh"?: number }`
+  (`dailyKwh` = the user's bill kWh ÷ days, to scale the typical-home curve).
+- **200:** `{ "recommendations": [{ "scenarioId", "title", "detail", "monthlySavings": number | null }], "source": "gemini" | "fallback" }`
+- The server computes every scenario with `lib/analysis.ts`; Gemini writes `{{savings}}` placeholders and our code fills
+  in the dollar amounts. If Gemini fails, it returns template tips (`source: "fallback"`) instead of an error.
 
 ## `POST /api/ask` — household savings plan for Tab 3 (Person 4)
 - **Body:** `{ "description": "free text, max 4000 chars" }`
