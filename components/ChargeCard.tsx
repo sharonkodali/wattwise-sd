@@ -15,7 +15,7 @@ export function formatUsd(amount: number) {
   return amount.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
-export function ChargeCard({ item }: { item: LineItem }) {
+export function ChargeCard({ item, categoryLabel }: { item: LineItem; categoryLabel?: string }) {
   const credit = item.amount < 0;
   return (
     <Card>
@@ -26,7 +26,7 @@ export function ChargeCard({ item }: { item: LineItem }) {
         </span>
       </CardHeader>
       <CardContent className="space-y-2">
-        <Badge variant="secondary">{CATEGORY_LABEL[item.category]}</Badge>
+        <Badge variant="secondary">{categoryLabel ?? CATEGORY_LABEL[item.category] ?? "Other"}</Badge>
         <p className="text-sm leading-relaxed text-foreground/90">{item.plainEnglish}</p>
       </CardContent>
     </Card>

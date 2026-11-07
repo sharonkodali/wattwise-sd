@@ -120,9 +120,10 @@
 .sample-button { height: 34px; padding: 0 13px; border-color: #d9e0d9; color: #315b48; font-size: 12px; }
 .total-card [data-slot="card-content"] { padding: 22px 24px; }
 .total-card p { color: #fff !important; }
-.total-card p:first-child { font-size: 12px; letter-spacing: .03em; }
-.total-card p:nth-child(2) { color: #fff !important; font-size: clamp(46px, 6vw, 62px); font-weight: 500; line-height: 1; }
-.total-card p:last-child { color: #c8dcd2 !important; font-size: 11px; }
+/* Explicit classes: the old :nth-child/:last-child rules both matched the amount, shrinking it to 11px. */
+.total-card .total-label { font-size: 12px; letter-spacing: .03em; color: #c8dcd2 !important; }
+.total-card .total-amount { color: #fff !important; font-size: clamp(46px, 6vw, 62px); font-weight: 500; line-height: 1; letter-spacing: -.02em; }
+.total-card .total-meta { color: #c8dcd2 !important; font-size: 11px; }
 .dashboard-tabs [data-slot="tabs-content"] { padding-top: 8px; }
 .dashboard-main { max-width: 1000px; padding-top: 36px; }
 .welcome-row { margin-bottom: 22px; }

@@ -55,7 +55,7 @@ export function BillUpload({ loading, error, onFile, onSample }: BillUploadProps
         >
           <span className="upload-icon">{busy ? <Loader2 className="animate-spin" aria-hidden /> : <FileUp aria-hidden />}</span>
           <span className="upload-copy"><strong>{busy ? loading : "Drop your bill here"}</strong><span>or <u>browse files</u> from this device</span></span>
-          <span className="upload-formats">PDF, JPG, PNG or HEIC <i /> Up to 15 MB</span>
+          <span className="upload-formats">PDF, JPG, PNG or HEIC <i /> Up to 4 MB (big photos are shrunk)</span>
         </button>
         <input
           ref={inputRef}
@@ -71,7 +71,7 @@ export function BillUpload({ loading, error, onFile, onSample }: BillUploadProps
           <Button type="button" variant="outline" disabled={busy} onClick={onSample} className="sample-button">
             Explore with a sample bill
           </Button>
-          <p>Sample figures are illustrative.</p>
+          <p>The sample is a made-up bill, read live by Gemini.</p>
         </div>
         {error && (
           <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
