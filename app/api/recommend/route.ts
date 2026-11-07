@@ -70,7 +70,10 @@ function attachNumbers(raw: { scenarioId: string | null; title: string; detail: 
     if (id) seen.add(id);
     const amount = id ? amounts.get(id)! : null;
     const fill = (s: string) =>
-      amount != null ? s.replaceAll("{{savings}}", money(amount)).replace(/\$\d[\d,]*(\.\d+)?/g, money(amount)) : s.replaceAll("{{savings}}", "");
+      // Function replacers: a plain "$11.41" replacement string would be read as regex group "$1" and garble the amount.
+      amount != null
+        ? s.replaceAll("{{savings}}", () => money(amount)).replace(/\$\d[\d,]*(\.\d+)?/g, () => money(amount))
+        : s.replaceAll("{{savings}}", "");
     if (amount == null && /\$\d/.test(r.detail + r.title)) continue; // no-dollar tip that made up a number: drop
     out.push({ scenarioId: id, title: fill(r.title).trim(), detail: fill(r.detail).trim(), monthlySavings: amount });
   }
