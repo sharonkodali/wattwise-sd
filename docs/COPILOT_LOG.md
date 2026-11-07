@@ -4,6 +4,7 @@ Every row is a real moment where Copilot helped build WattWise SD. Add one each 
 Copilot Chat). Screenshots go in `docs/screenshots/`. Setup and task ideas: [`COPILOT_PLAYBOOK.md`](COPILOT_PLAYBOOK.md).
 
 ## Team-wide Copilot setup
+
 - **Custom instructions** — `.github/copilot-instructions.md` gives Copilot our stack, file owners and rules
   (Gemini explains / our code does the math, server-only API key, heat-safety rule, 4.4 MB upload limit), so every
   teammate gets consistent answers.
@@ -12,9 +13,9 @@ Copilot Chat). Screenshots go in `docs/screenshots/`. Setup and task ideas: [`CO
 
 ## Log
 
-| Time | Who | Copilot feature | What we asked | What it produced | What we changed | Time saved |
-| --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |  |
+| Time               | Who  | Copilot feature     | What we asked                                                                              | What it produced                                                 | What we changed                                                                             | Time saved |
+| ------------------ | ---- | ------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------- |
+| 2026-11-07 2:29 PM | Team | Agent mode + Vitest | Write and run the target tests for translate, recommend, analysis, analyze-bill and gemini | Five focused spec files with mocked Gemini and real route checks | Added a working test harness, passed all 10 checks, and documented the result in TESTING.md | ~20 min    |
 
 <!-- Example row format (delete once you have real entries):
 | 2:10 PM | P3 | Agent mode | Average the OpenEI 8760-hour CSV into kWh per hour of day | Node script + JSON output | Fixed the column name | ~15 min |
