@@ -85,7 +85,7 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
       <Card>
         <CardHeader>
           <CardTitle>What each hour of the day costs you</CardTitle>
-          <CardDescription>Average {season} weekday. Red bars are on-peak (4–9 PM), the most expensive hours.</CardDescription>
+          <CardDescription>Average {season} weekday. Orange bars are on-peak (4–9 PM), the most expensive hours.</CardDescription>
         </CardHeader>
         <CardContent>
           <CostByHourChart data={hours} />
