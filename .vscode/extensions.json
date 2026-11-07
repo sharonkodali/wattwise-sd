@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "maxie-homrich.copilot-for-vscode-oss"
+        "GitHub.copilot-chat",
+        "anthropic.claude-code",
+        "dbaeumer.vscode-eslint"
     ]
 }

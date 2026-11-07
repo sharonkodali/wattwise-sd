@@ -25,10 +25,23 @@ moment in [`COPILOT_LOG.md`](COPILOT_LOG.md).
 | **Fix errors** | Hover a red squiggle → "Fix with Copilot" | TypeScript/lint errors |
 | **Copilot code review** | On a GitHub PR → Reviewers → Copilot | Second pair of eyes before merging |
 
+> Use only the official **GitHub Copilot Chat** extension (publisher: GitHub). Recent VS Code versions include it
+> built in. Don't install lookalike "Copilot" extensions from other publishers.
+
+## Testing with Copilot (our main showcase)
+Plan and results live in [`TESTING.md`](TESTING.md). For each row there:
+1. Open Copilot Chat → **Agent** mode → type `/test-endpoint` → enter the file (e.g. `app/api/translate/route.ts`).
+2. Let agent mode install Vitest (first time only), write the tests, run `npm test`, and fix failures.
+3. Read every change before clicking **Keep**. If it changed app code (not just tests), make sure you understand why.
+4. Screenshot the chat + green test output into `docs/screenshots/`.
+5. Type `/log-copilot` to add the row to `COPILOT_LOG.md`; agent mode also fills the Results table in `TESTING.md`.
+
+Suggested order (most impressive first): translate → recommend → analysis → analyze-bill → gemini → ask.
+
 ## 3. Tasks to do with Copilot right now (from the TODOs in the code)
 
 **P1 — Backend (`app/api/*`, `lib/`)**
-- `/test-endpoint` on `app/api/translate/route.ts` → Vitest tests proving numbers never change. *(Great demo of agent mode running tests.)*
+- Testing (see "Testing with Copilot" above): translate, analyze-bill, gemini.
 - Inline chat on `lib/gemini.ts`: "add a simple per-IP rate limit so the demo can't burn our Gemini quota."
 - Agent: "Add an optional `bill` field to `/api/ask` so the savings plan can use the uploaded bill's numbers."
 - Ask Copilot code review to review your PR before merging to `main`.
