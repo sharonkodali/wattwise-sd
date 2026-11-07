@@ -22,11 +22,23 @@ Most people can't tell what drives their bill, when power is most expensive, or 
 4. **Grounded tips** — Gemini only explains numbers our code calculated from public data (`lib/analysis.ts` → `app/api/recommend`).
 5. **Personal plans from free text** — `app/api/ask`.
 
-Prompts are in [`docs/GEMINI_USAGE.md`](docs/GEMINI_USAGE.md).
+**Making it trustworthy:**
+- Translation sends only text to Gemini; our server copies every number back from the original, so a dollar amount can never change.
+- After reading a bill, our code checks that the line items add up to the total (`checks.matchesTotal`) and rejects non-bills.
+- Model `gemini-3.5-flash` with a 25 s cutoff, automatic retry, and fallback to other Flash models when Gemini is busy.
+- Safety rule in prompts: never tell older adults or at-risk people to turn off cooling in hot weather.
+
+Prompts are in [`docs/GEMINI_USAGE.md`](docs/GEMINI_USAGE.md); endpoint contracts are in [`docs/API.md`](docs/API.md).
 
 ## How we used GitHub Copilot
-See [`docs/COPILOT_LOG.md`](docs/COPILOT_LOG.md) for every example, who did it, and time saved.
-<!-- TODO(P4): summarize the 3-5 best Copilot moments here with screenshots. -->
+- **Custom instructions** ([`.github/copilot-instructions.md`](.github/copilot-instructions.md)) teach Copilot our stack,
+  file owners and rules, so all four of us got answers that matched the codebase.
+- **Reusable prompt files** ([`.github/prompts/`](.github/prompts/)): `/new-api-route`, `/test-endpoint`, `/log-copilot`.
+- **Agent mode, inline chat and inline suggestions** for features, tests and fixes — every real example, who did it
+  and time saved is in [`docs/COPILOT_LOG.md`](docs/COPILOT_LOG.md). How we worked: [`docs/COPILOT_PLAYBOOK.md`](docs/COPILOT_PLAYBOOK.md).
+<!-- TODO(P4): add the 3-5 best Copilot moments from the log here, with screenshots. -->
+
+**Other AI tools:** the initial project scaffold and backend hardening were done with Claude Code.
 
 ## Data sources
 - SDG&E TOU-DR1 Total Rates Table (sdge.com regulatory documents)
