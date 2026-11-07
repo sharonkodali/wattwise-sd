@@ -1,6 +1,6 @@
 // POST multipart form-data { file } -> BillAnalysis. OWNER: Person 1.
 import { NextResponse } from "next/server";
-import { generateJson, SDGE_GLOSSARY } from "@/lib/gemini";
+import { friendlyError, generateJson, SDGE_GLOSSARY } from "@/lib/gemini";
 import { billAnalysisJsonSchema, type BillAnalysis } from "@/lib/schemas";
 
 export const maxDuration = 60;
@@ -28,6 +28,6 @@ Glossary:${SDGE_GLOSSARY}`,
     return NextResponse.json(analysis);
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: err instanceof Error ? err.message : "Analysis failed" }, { status: 500 });
+    return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
   }
 }

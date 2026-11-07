@@ -1,6 +1,6 @@
 // POST { analysis: BillAnalysis, language: string } -> BillAnalysis (text translated, numbers unchanged). OWNER: Person 1.
 import { NextResponse } from "next/server";
-import { generateJson } from "@/lib/gemini";
+import { friendlyError, generateJson } from "@/lib/gemini";
 import { billAnalysisJsonSchema, type BillAnalysis } from "@/lib/schemas";
 
 export async function POST(req: Request) {
@@ -16,6 +16,6 @@ Keep it simple and friendly. Do NOT change any numbers, enum values, "provider" 
     return NextResponse.json(translated);
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: err instanceof Error ? err.message : "Translation failed" }, { status: 500 });
+    return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
   }
 }

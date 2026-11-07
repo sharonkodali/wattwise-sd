@@ -1,6 +1,6 @@
 // POST { stats } (computed by lib/analysis.ts) -> { recommendations[] }. OWNER: Person 3.
 import { NextResponse } from "next/server";
-import { generateJson } from "@/lib/gemini";
+import { friendlyError, generateJson } from "@/lib/gemini";
 import { recommendationsJsonSchema, type Recommendation } from "@/lib/schemas";
 
 export async function POST(req: Request) {
@@ -16,6 +16,6 @@ never invent new numbers. Mention specific appliances and times (e.g. "run the d
     return NextResponse.json(result);
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: err instanceof Error ? err.message : "Recommendation failed" }, { status: 500 });
+    return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
   }
 }

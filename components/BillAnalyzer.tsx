@@ -51,7 +51,17 @@ export function BillAnalyzer() {
         <CardHeader><CardTitle>Upload your SDG&amp;E bill (PDF or photo)</CardTitle></CardHeader>
         <CardContent className="flex flex-wrap items-center gap-3">
           <input type="file" accept="application/pdf,image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
-          <Button variant="outline" onClick={() => { setOriginal(mockBill); setBill(mockBill); }}>Use sample data</Button>
+          <Button
+            variant="outline"
+            disabled={!!loading}
+            onClick={async () => {
+              const blob = await (await fetch("/sample-bill.pdf")).blob();
+              upload(new File([blob], "sample-bill.pdf", { type: "application/pdf" }));
+            }}
+          >
+            Try sample bill (PDF)
+          </Button>
+          <Button variant="ghost" onClick={() => { setOriginal(mockBill); setBill(mockBill); }}>Offline mock</Button>
           {original && (
             <select className="rounded-md border px-2 py-1" onChange={(e) => translate(e.target.value)} defaultValue="English">
               {LANGUAGES.map((l) => <option key={l}>{l}</option>)}

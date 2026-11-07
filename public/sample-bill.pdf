@@ -1,0 +1,64 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2360 >>
+stream
+BT /F2 16 Tf 50 760 Td (SAMPLE BILL - FOR DEMO ONLY - NOT A REAL ACCOUNT) Tj ET
+BT /F2 14 Tf 50 735 Td (San Diego Gas & Electric - Residential Energy Statement) Tj ET
+BT /F1 10 Tf 50 712 Td (Account: 0000-000-0000 \(sample\)    Service address: 123 Example St, San Diego, CA 92122) Tj ET
+BT /F1 10 Tf 50 693 Td (Statement date: 10/15/2026    Billing period: 09/12/2026 - 10/11/2026 \(30 days\)) Tj ET
+BT /F1 10 Tf 50 674 Td (Rate plan: TOU-DR1    Generation provider: San Diego Community Power \(PowerOn\)) Tj ET
+BT /F2 12 Tf 50 655 Td (Amount due: $171.10    Due by: 11/03/2026) Tj ET
+BT /F1 10 Tf 50 634 Td ( ) Tj ET
+BT /F2 12 Tf 50 615 Td (ELECTRIC DELIVERY CHARGES \(SDG&E\)) Tj ET
+BT /F1 10 Tf 50 594 Td (On-Peak \(4pm-9pm\)            62 kWh  x $0.3100  =  $19.22) Tj ET
+BT /F1 10 Tf 50 575 Td (Off-Peak                    180 kWh  x $0.2350  =  $42.30) Tj ET
+BT /F1 10 Tf 50 556 Td (Super Off-Peak              148 kWh  x $0.1650  =  $24.42) Tj ET
+BT /F1 10 Tf 50 537 Td (Base Services Charge                              =  $24.00) Tj ET
+BT /F1 10 Tf 50 518 Td (Baseline Adjustment Credit   210 kWh x -$0.1100  = -$23.10) Tj ET
+BT /F1 10 Tf 50 499 Td (Total Electric Delivery                           =  $86.84) Tj ET
+BT /F1 10 Tf 50 480 Td ( ) Tj ET
+BT /F2 12 Tf 50 461 Td (ELECTRIC GENERATION) Tj ET
+BT /F1 10 Tf 50 440 Td (SDG&E Electric Generation \(390 kWh\)               =  $52.10) Tj ET
+BT /F1 10 Tf 50 421 Td (SDG&E Generation Credit                           = -$52.10) Tj ET
+BT /F1 10 Tf 50 402 Td (San Diego Community Power - PowerOn \(390 kWh\)     =  $58.40) Tj ET
+BT /F1 10 Tf 50 383 Td (Power Charge Indifference Adjustment \(PCIA\)       =   $9.80) Tj ET
+BT /F1 10 Tf 50 364 Td (Total Electric Generation                         =  $68.20) Tj ET
+BT /F1 10 Tf 50 345 Td ( ) Tj ET
+BT /F2 12 Tf 50 326 Td (OTHER CHARGES & CREDITS) Tj ET
+BT /F1 10 Tf 50 305 Td (Wildfire Fund Charge                              =   $2.15) Tj ET
+BT /F1 10 Tf 50 286 Td (State Regulatory Fees & Franchise Fees            =   $3.41) Tj ET
+BT /F1 10 Tf 50 267 Td (Electric Users Tax                                =  $10.50) Tj ET
+BT /F1 10 Tf 50 248 Td ( ) Tj ET
+BT /F2 12 Tf 50 229 Td (TOTAL ELECTRIC CHARGES                            = $171.10) Tj ET
+BT /F1 9 Tf 50 208 Td (Compare: same period last year 352 kWh. Peak hours are 4pm-9pm every day.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000002663 00000 n 
+0000002731 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+2806
+%%EOF

@@ -1,6 +1,6 @@
 // POST { description } -> AskResult. OWNER: Person 4.
 import { NextResponse } from "next/server";
-import { generateJson, SDGE_GLOSSARY } from "@/lib/gemini";
+import { friendlyError, generateJson, SDGE_GLOSSARY } from "@/lib/gemini";
 import { askJsonSchema, type AskResult } from "@/lib/schemas";
 import assistance from "@/data/assistance.json";
 
@@ -21,6 +21,6 @@ Glossary:${SDGE_GLOSSARY}`,
     return NextResponse.json(result);
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: err instanceof Error ? err.message : "Request failed" }, { status: 500 });
+    return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
   }
 }
