@@ -8,9 +8,9 @@ export default function Home() {
   return (
     <div className="app-shell min-h-screen">
       <header className="topbar">
-        <a href="#home" className="brand-lockup" aria-label="WattSplit home">
+        <a href="#home" className="brand-lockup" aria-label="WattWise SD home">
           <span className="brand-mark"><Leaf size={18} strokeWidth={2.2} aria-hidden /></span>
-          <span>Watt<span className="brand-light">Split</span></span>
+          <span>Watt<span className="brand-light">Wise SD</span></span>
         </a>
         <div className="location-label"><MapPin size={14} aria-hidden /> San Diego, CA</div>
       </header>
