@@ -16,7 +16,17 @@ export type BillAnalysis = {
   lineItems: LineItem[];
   summary: string;
   topSavingTip: string;
+  /** Added by the server after extraction (not by Gemini). */
+  checks?: {
+    lineItemsSum: number;
+    matchesTotal: boolean; // line items add up to totalDue within $1
+    totalKwh: number;
+    peakSharePct: number; // % of kWh used 4-9 PM
+  };
 };
+
+export const SUPPORTED_LANGUAGES = ["English", "Spanish", "Vietnamese", "Tagalog", "Chinese (Simplified)", "Arabic"] as const;
+export type Language = (typeof SUPPORTED_LANGUAGES)[number];
 
 export type Recommendation = { title: string; detail: string; monthlySavings?: string };
 
@@ -30,6 +40,7 @@ export type AskResult = {
 export const billAnalysisJsonSchema = {
   type: "object",
   properties: {
+    isUtilityBill: { type: "boolean", description: "false if the document is not an electric/gas utility bill" },
     billingPeriod: { type: "string" },
     ratePlan: { type: "string" },
     provider: { type: "string", enum: ["SDCP", "SDG&E"] },
@@ -62,7 +73,7 @@ export const billAnalysisJsonSchema = {
     summary: { type: "string" },
     topSavingTip: { type: "string" },
   },
-  required: ["billingPeriod", "ratePlan", "provider", "totalDue", "kwhByPeriod", "lineItems", "summary", "topSavingTip"],
+  required: ["isUtilityBill", "billingPeriod", "ratePlan", "provider", "totalDue", "kwhByPeriod", "lineItems", "summary", "topSavingTip"],
 } as const;
 
 export const recommendationsJsonSchema = {

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import type { BillAnalysis } from "@/lib/schemas";
 import { mockBill } from "@/lib/mock-bill";
 
-const LANGUAGES = ["English", "Spanish", "Vietnamese", "Tagalog", "Chinese (Simplified)", "Arabic"];
+import { SUPPORTED_LANGUAGES as LANGUAGES } from "@/lib/schemas";
 
 export function BillAnalyzer() {
   const [original, setOriginal] = useState<BillAnalysis | null>(null);
