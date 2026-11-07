@@ -26,16 +26,15 @@ Electricity is also more expensive during peak hours (4–9 PM), but many reside
 4. **Grounded recommendations** — Gemini explains calculations based on data processed by our application (`lib/analysis.ts` → `app/api/recommend`).
 5. **Personalized plans** — Uses household descriptions to generate energy-saving suggestions and CARE/FERA assistance information (`app/api/ask`).
 
-Our prompts and Gemini API usage examples are documented in [`docs/GEMINI_USAGE.md`](docs/GEMINI_USAGE.md).
+### Making It Trustworthy
+
+- Translation sends only text to Gemini; our server preserves the original numbers so dollar amounts are not changed.
+- After reading a bill, our code checks whether line items add up to the total (`checks.matchesTotal`) and rejects non-bills.
+- Prompts include a safety rule: never tell older adults or at-risk people to turn off cooling in hot weather.
+
+Prompts and Gemini API examples are documented in [`docs/GEMINI_USAGE.md`](docs/GEMINI_USAGE.md). Endpoint contracts are in [`docs/API.md`](docs/API.md).
 
 ## How We Used GitHub Copilot
 
-We used GitHub Copilot to support development, review frontend components, and improve the demo experience.
-
-See [`docs/COPILOT_LOG.md`](docs/COPILOT_LOG.md) for examples of our Copilot interactions, changes made, and estimated time saved.
-
-Screenshots of selected Copilot interactions are stored in `docs/screenshots/`.
-
-## Data Sources
-
-- SDG&E Time
+- **Custom instructions** ([`.github/copilot-instructions.md`](.github/copilot-instructions.md)) teach Copilot our stack, file owners, and rules.
+- **Reusable prompt files** ([`.github/prompts/`](.github/prompts/)): `/

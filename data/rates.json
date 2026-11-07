@@ -1,7 +1,54 @@
 {
-  "_note": "SAMPLE PLACEHOLDER RATES ($/kWh). Person 3: replace with the current SDG&E TOU-DR1 Total Rates Table values.",
-  "plan": "TOU-DR1",
-  "summer": { "onPeak": 0.60, "offPeak": 0.42, "superOffPeak": 0.30 },
-  "winter": { "onPeak": 0.50, "offPeak": 0.45, "superOffPeak": 0.40 },
-  "careDiscount": 0.35
+  "schedule": "TOU-DR1",
+  "provider": "SDG&E (bundled service: SDG&E delivery + SDG&E generation)",
+  "effectiveDate": "2026-08-01",
+  "units": "$/kWh unless noted",
+  "sources": {
+    "standard": "https://www.sdge.com/sites/default/files/regulatory/8-1-26%20Schedule%20TOU-DR1%20Total%20Rates%20Table.pdf",
+    "care": "https://www.sdge.com/sites/default/files/regulatory/8-1-26%20Schedule%20TOU-DR1-CARE%20Total%20Rates%20Table.pdf"
+  },
+  "seasons": {
+    "summer": { "months": [6, 7, 8, 9, 10], "label": "June 1 - October 31" },
+    "winter": { "months": [11, 12, 1, 2, 3, 4, 5], "label": "November 1 - May 31" }
+  },
+  "periods": {
+    "_note": "Hours are 0-23 = the hour starting at that time (16 = 4:00-4:59 PM). Period rules come from the TOU-DR1 tariff sheet, not the rates table; confirm against the tariff before demo.",
+    "weekday": {
+      "onPeak": [16, 17, 18, 19, 20],
+      "superOffPeak": [0, 1, 2, 3, 4, 5],
+      "offPeak": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 21, 22, 23]
+    },
+    "weekdayMarchApril": {
+      "_note": "In March and April, weekdays 10 AM-2 PM are also super off-peak.",
+      "onPeak": [16, 17, 18, 19, 20],
+      "superOffPeak": [0, 1, 2, 3, 4, 5, 10, 11, 12, 13],
+      "offPeak": [6, 7, 8, 9, 14, 15, 21, 22, 23]
+    },
+    "weekendHoliday": {
+      "onPeak": [16, 17, 18, 19, 20],
+      "superOffPeak": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+      "offPeak": [14, 15, 21, 22, 23]
+    }
+  },
+  "standard": {
+    "summer": { "onPeak": 0.69135, "offPeak": 0.46421, "superOffPeak": 0.37433 },
+    "winter": { "onPeak": 0.61471, "offPeak": 0.53060, "superOffPeak": 0.43719 },
+    "baselineCredit": -0.10702,
+    "baseServicesChargePerDay": 0.79343
+  },
+  "care": {
+    "_note": "Total adjusted CARE rate (35% CARE discount and surcharge exemptions already applied).",
+    "summer": { "onPeak": 0.43992, "offPeak": 0.29228, "superOffPeak": 0.23386 },
+    "winter": { "onPeak": 0.39010, "offPeak": 0.33543, "superOffPeak": 0.27472 },
+    "baselineCredit": -0.06956,
+    "baseServicesChargePerDay": 0.19713
+  },
+  "fera": {
+    "_note": "FERA = 18% line-item discount on the bill (excluding base services charge), plus a lower base services charge.",
+    "discountPct": 0.18,
+    "baseServicesChargePerDay": 0.39688
+  },
+  "baselineCredit_note": "Credit applies to usage up to 130% of the household's baseline allowance (depends on climate zone and season); bills show the allowance.",
+  "communityPower_note": "Most City of San Diego customers get generation from San Diego Community Power (SDCP). Their bill shows SDG&E delivery charges plus a PCIA line plus SDCP generation charges, so totals differ from these bundled rates.",
+  "pciaCca2026Vintage": 0.04771
 }

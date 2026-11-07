@@ -1,7 +1,24 @@
 // Gemini client + helper. OWNER: Person 1. Server-only: never import this in a "use client" file.
 import { GoogleGenAI, type Part } from "@google/genai";
 
-export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash"; // check AI Studio for the newest Flash model
+// gemini-3.5-flash: ~3s on our sample bill (Nov 7). gemini-3.8-flash was overloaded (100s+ / 503s), so it's not the default.
+export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.5-flash";
+// If the main model is slow, overloaded (503) or rate-limited (429), fall back to these in order.
+const FALLBACK_MODELS = ["gemini-3.1-flash-lite", "gemini-3.6-flash"];
+const PER_CALL_TIMEOUT_MS = 25_000;
+
+function isRetryable(err: unknown) {
+  const msg = err instanceof Error ? `${err.name} ${err.message}` : String(err);
+  return /\b(429|500|503|504|UNAVAILABLE|RESOURCE_EXHAUSTED|DEADLINE_EXCEEDED|high demand|overloaded|abort|timeout|timed out)/i.test(msg);
+}
+
+/** Turn raw Gemini errors into a short message for the UI. */
+export function friendlyError(err: unknown) {
+  if (isRetryable(err)) return "Gemini is busy right now. Please try again in a few seconds.";
+  const msg = err instanceof Error ? err.message : "Something went wrong";
+  // Raw API errors (JSON blobs, long stack-like text) are logged on the server, not shown to users.
+  return msg.length > 200 || msg.trim().startsWith("{") ? "Something went wrong talking to Gemini." : msg;
+}
 
 let client: GoogleGenAI | null = null;
 function getClient() {
@@ -16,19 +33,36 @@ export async function generateJson<T>(opts: {
   parts: Part[];
   schema: unknown;
 }): Promise<T> {
-  const res = await getClient().models.generateContent({
-    model: GEMINI_MODEL,
-    contents: [{ role: "user", parts: opts.parts }],
-    config: {
-      systemInstruction: opts.system,
-      responseMimeType: "application/json",
-      responseJsonSchema: opts.schema,
-      temperature: 0.3,
-    },
-  });
-  const text = res.text;
-  if (!text) throw new Error("Gemini returned an empty response");
-  return JSON.parse(text) as T;
+  const models = [GEMINI_MODEL, ...FALLBACK_MODELS.filter((m) => m !== GEMINI_MODEL)];
+  let lastErr: unknown;
+  for (const model of models) {
+    // One quick retry on the main model; fallbacks get one try each.
+    const attempts = model === GEMINI_MODEL ? 2 : 1;
+    for (let attempt = 0; attempt < attempts; attempt++) {
+      try {
+        const res = await getClient().models.generateContent({
+          model,
+          contents: [{ role: "user", parts: opts.parts }],
+          config: {
+            systemInstruction: opts.system,
+            responseMimeType: "application/json",
+            responseJsonSchema: opts.schema,
+            temperature: 0.3,
+            abortSignal: AbortSignal.timeout(PER_CALL_TIMEOUT_MS),
+          },
+        });
+        const text = res.text;
+        if (!text) throw new Error("Gemini returned an empty response");
+        return JSON.parse(text) as T;
+      } catch (err) {
+        lastErr = err;
+        if (!isRetryable(err)) throw err;
+        console.warn(`[gemini] ${model} attempt ${attempt + 1} failed, retrying`);
+        await new Promise((r) => setTimeout(r, 800));
+      }
+    }
+  }
+  throw lastErr;
 }
 
 /** Plain-English glossary of SDG&E bill terms, included in prompts so explanations are accurate. */

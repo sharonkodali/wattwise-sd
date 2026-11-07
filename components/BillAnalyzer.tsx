@@ -1,92 +1,192 @@
 "use client";
 // Tab 1: Bill Analyzer (MAIN feature). OWNER: Person 2 (UI) + Person 1 (API).
-// TODO(P2): drag-and-drop, kWh-by-period donut chart, nicer ChargeCards, mobile layout.
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ArrowUpRight, Lightbulb, Users, ShieldCheck, TrendingUp, Zap, Clock3 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { BillUpload } from "@/components/BillUpload";
+import { ChargeCard, formatUsd } from "@/components/ChargeCard";
+import { KwhDonut } from "@/components/KwhDonut";
+import { LanguageSelect, type Language } from "@/components/LanguageSelect";
 import type { BillAnalysis } from "@/lib/schemas";
 import { mockBill } from "@/lib/mock-bill";
 
-const LANGUAGES = ["English", "Spanish", "Vietnamese", "Tagalog", "Chinese (Simplified)", "Arabic"];
+const ALLOWED = ["application/pdf", "image/png", "image/jpeg", "image/webp", "image/heic"];
 
 export function BillAnalyzer() {
-  const [original, setOriginal] = useState<BillAnalysis | null>(null);
-  const [bill, setBill] = useState<BillAnalysis | null>(null);
+  const [original, setOriginal] = useState<BillAnalysis | null>(mockBill);
+  const [bill, setBill] = useState<BillAnalysis | null>(mockBill);
+  const [language, setLanguage] = useState<Language>("English");
+  const [roommates, setRoommates] = useState(3);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  function showSample() {
+    setOriginal(mockBill);
+    setBill(mockBill);
+    setLanguage("English");
+    setError(null);
+  }
+
   async function upload(file: File) {
-    setLoading("Reading your bill..."); setError(null);
+    if (!ALLOWED.includes(file.type) && !file.name.toLowerCase().endsWith(".pdf")) {
+      setError("Use a PDF or a photo (JPG, PNG, WEBP, or HEIC).");
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      setError("That file is over 15 MB. Try a smaller photo or PDF.");
+      return;
+    }
+    setLoading("Reading your bill...");
+    setError(null);
     try {
       const body = new FormData();
       body.append("file", file);
       const res = await fetch("/api/analyze-bill", { method: "POST", body });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setOriginal(data); setBill(data);
-    } catch (e) { setError(e instanceof Error ? e.message : "Something went wrong"); }
-    finally { setLoading(null); }
+      if (!res.ok) throw new Error(data.error ?? "Could not read that bill.");
+      setOriginal(data);
+      setBill(data);
+      setLanguage("English");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setLoading(null);
+    }
   }
 
-  async function translate(language: string) {
+  async function translate(next: Language) {
     if (!original) return;
-    if (language === "English") return setBill(original);
-    setLoading(`Translating to ${language}...`); setError(null);
+    setLanguage(next);
+    if (next === "English") {
+      setBill(original);
+      return;
+    }
+    setLoading(`Translating to ${next}...`);
+    setError(null);
     try {
       const res = await fetch("/api/translate", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ analysis: original, language }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ analysis: original, language: next }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new Error(data.error ?? "Translation failed");
       setBill(data);
-    } catch (e) { setError(e instanceof Error ? e.message : "Translation failed"); }
-    finally { setLoading(null); }
+    } catch (e) {
+      setLanguage("English");
+      setBill(original);
+      setError(e instanceof Error ? e.message : "Translation failed");
+    } finally {
+      setLoading(null);
+    }
   }
 
+  const provider =
+    bill?.provider === "SDCP" ? "San Diego Community Power" : "SDG&E";
+  const totalKwh = bill ? bill.kwhByPeriod.onPeak + bill.kwhByPeriod.offPeak + bill.kwhByPeriod.superOffPeak : 0;
+  const peakShare = totalKwh ? Math.round((bill!.kwhByPeriod.onPeak / totalKwh) * 100) : 0;
+
   return (
-    <div className="space-y-4 pt-4">
-      <Card>
-        <CardHeader><CardTitle>Upload your SDG&amp;E bill (PDF or photo)</CardTitle></CardHeader>
-        <CardContent className="flex flex-wrap items-center gap-3">
-          <input type="file" accept="application/pdf,image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
-          <Button variant="outline" onClick={() => { setOriginal(mockBill); setBill(mockBill); }}>Use sample data</Button>
-          {original && (
-            <select className="rounded-md border px-2 py-1" onChange={(e) => translate(e.target.value)} defaultValue="English">
-              {LANGUAGES.map((l) => <option key={l}>{l}</option>)}
-            </select>
-          )}
-          {loading && <span className="text-sm text-muted-foreground">{loading}</span>}
-          {error && <span className="text-sm text-red-600">{error}</span>}
-        </CardContent>
-      </Card>
+    <div className="space-y-4 pt-3">
+      <BillUpload loading={loading} error={error} onFile={upload} onSample={showSample} />
 
       {bill && (
-        <>
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground">{bill.billingPeriod} · {bill.ratePlan} · {bill.provider === "SDCP" ? "San Diego Community Power" : "SDG&E"}</p>
-              <p className="text-4xl font-bold">${bill.totalDue.toFixed(2)}</p>
-              <p className="mt-2">{bill.summary}</p>
-              <p className="mt-2 font-medium">Top tip: {bill.topSavingTip}</p>
+        <div className="space-y-4" dir={language === "Arabic" ? "rtl" : "ltr"}>
+          <div className="insight-strip">
+            <div className="insight-item"><span className="insight-icon"><TrendingUp size={16} /></span><div><small>Billing period</small><strong>{bill.billingPeriod.split("(")[0].trim()}</strong></div></div>
+            <div className="insight-item"><span className="insight-icon amber"><Clock3 size={16} /></span><div><small>Usage during peak</small><strong>{peakShare}% <em>of your kWh</em></strong></div></div>
+            <div className="insight-item"><span className="insight-icon mint"><Zap size={16} /></span><div><small>Total electricity</small><strong>{totalKwh.toLocaleString()} <em>kWh</em></strong></div></div>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="sample-status"><span />{original === mockBill ? "Sample bill · try the layout" : "Bill analyzed"}</span>
+              <span className="hidden sm:inline">Amounts and usage stay the same when translated.</span>
+            </div>
+            <LanguageSelect value={language} disabled={loading !== null} onChange={translate} />
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
+            <Card className="total-card border-0 text-primary-foreground">
+              <CardContent className="flex h-full min-h-52 flex-col justify-between gap-7 py-2">
+                <div>
+                  <p className="text-sm text-primary-foreground/75">Monthly bill · total due</p>
+                  <p dir="ltr" className="mt-2 text-5xl font-semibold tracking-tight tabular-nums sm:text-6xl">
+                  {formatUsd(bill.totalDue)}
+                  </p>
+                </div>
+                <p className="text-xs text-primary-foreground/75">
+                  {bill.billingPeriod} · {bill.ratePlan} · {provider}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent>
+                <p className="mb-1 text-sm font-semibold text-foreground">Your electricity by time of day</p>
+                <p className="text-xs text-muted-foreground">4–9 PM is SDG&amp;E’s most expensive window.</p>
+                <KwhDonut kwhByPeriod={bill.kwhByPeriod} />
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Card>
+              <CardContent>
+                <p className="text-sm font-medium text-muted-foreground">Summary</p>
+                <p className="mt-1 text-base leading-relaxed">{bill.summary}</p>
+              </CardContent>
+            </Card>
+            <Card className="tip-card border-accent/50 bg-accent/20">
+              <CardContent>
+                <p className="flex items-center gap-1.5 text-sm font-medium">
+                  <Lightbulb className="size-4" aria-hidden />
+                  Top tip
+                </p>
+                <p className="mt-1 text-base leading-relaxed">{bill.topSavingTip}</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="breakdown-card">
+            <CardContent className="grid gap-5 md:grid-cols-[.8fr_1.2fr] md:items-center">
+              <div><p className="eyebrow">A QUICK READ</p><h2 className="breakdown-title">Your energy story</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">See how your electricity use is distributed across the day. Moving flexible chores out of the evening peak can help lower future bills.</p></div>
+              <div className="period-bars" aria-label={`Energy use: ${peakShare}% on peak, ${Math.round(bill.kwhByPeriod.offPeak / totalKwh * 100)}% off peak, ${Math.round(bill.kwhByPeriod.superOffPeak / totalKwh * 100)}% super off peak`}>
+                {[{name:"On peak · 4–9 PM",value:bill.kwhByPeriod.onPeak,color:"#d39130"},{name:"Off peak",value:bill.kwhByPeriod.offPeak,color:"#287963"},{name:"Super off peak",value:bill.kwhByPeriod.superOffPeak,color:"#a9c7aa"}].map((item)=><div className="period-row" key={item.name}><div className="period-label"><span><i style={{background:item.color}} />{item.name}</span><b>{item.value} kWh</b></div><div className="period-track"><span style={{width:`${totalKwh ? item.value/totalKwh*100 : 0}%`,background:item.color}} /></div></div>)}
+              </div>
             </CardContent>
           </Card>
+
+          <div className="section-heading">
+            <div><p className="eyebrow">WHERE IT GOES</p><h2>Charges, in plain English</h2></div>
+            <span>{bill.lineItems.length} line items</span>
+          </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {bill.lineItems.map((item, i) => (
-              <Card key={i}>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-base">{item.name}</CardTitle>
-                  <span className={item.amount < 0 ? "text-green-600" : ""}>${item.amount.toFixed(2)}</span>
-                </CardHeader>
-                <CardContent>
-                  <Badge variant="secondary" className="mb-2">{item.category.replace("_", " & ")}</Badge>
-                  <p className="text-sm">{item.plainEnglish}</p>
-                </CardContent>
-              </Card>
+              <ChargeCard key={`${item.name}-${i}`} item={item} />
             ))}
           </div>
-        </>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card className="split-panel">
+              <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-start gap-3">
+                  <span className="feature-icon mint"><Users size={18} aria-hidden /></span>
+                  <div><p className="font-semibold text-foreground">A fair split, made simple</p><p className="mt-1 max-w-sm text-sm leading-relaxed text-muted-foreground">Split this bill evenly with your household. Adjust the headcount to see each share.</p></div>
+                </div>
+                <div className="split-control">
+                  <label htmlFor="roommate-count">People</label>
+                  <input id="roommate-count" type="number" min={1} max={12} value={roommates} onChange={(e) => setRoommates(Math.min(12, Math.max(1, Number(e.target.value) || 1)))} />
+                  <strong>{formatUsd(bill.totalDue / roommates)} <small>each</small></strong>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="care-panel">
+              <CardContent className="flex items-start gap-3">
+                <span className="feature-icon"><ShieldCheck size={18} aria-hidden /></span>
+                <div className="min-w-0"><p className="font-semibold text-foreground">You may qualify for a lower bill</p><p className="mt-1 text-sm leading-relaxed text-muted-foreground">SDG&amp;E’s CARE and FERA programs offer eligible households a monthly bill discount. Check the current requirements and apply directly with SDG&amp;E.</p><a className="inline-flex items-center gap-1 pt-3 text-sm font-semibold text-primary" href="https://www.sdge.com/residential/pay-bill/get-payment-bill-assistance/carefera" target="_blank" rel="noreferrer">Check CARE / FERA eligibility <ArrowUpRight size={14} aria-hidden /></a></div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       )}
     </div>
   );

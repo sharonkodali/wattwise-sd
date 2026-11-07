@@ -1,4 +1,0 @@
-{
-  "_note": "SAMPLE average-day kWh per hour (0 = midnight). Person 3: replace with the OpenEI San Diego (Lindbergh Field) residential BASE profile averaged by hour.",
-  "kwhByHour": [0.32,0.29,0.27,0.26,0.26,0.29,0.38,0.48,0.47,0.42,0.40,0.41,0.43,0.45,0.48,0.55,0.70,0.88,1.02,1.05,0.96,0.80,0.60,0.43]
-}
