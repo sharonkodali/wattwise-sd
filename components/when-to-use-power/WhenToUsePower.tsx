@@ -34,13 +34,11 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
   const care = useMemo(() => careMonthlySavings(season, dailyKwh), [season, dailyKwh]);
 
   const [tips, setTips] = useState<Recommendation[] | null>(null);
-  const [tipsLoading, setTipsLoading] = useState(false);
+  const [tipsLoading, setTipsLoading] = useState(true);
   const [tipsError, setTipsError] = useState<string | null>(null);
 
   useEffect(() => {
     const ctrl = new AbortController();
-    setTipsLoading(true);
-    setTipsError(null);
     fetch("/api/recommend", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -65,8 +63,8 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
     <div className="space-y-6">
       {/* Controls */}
       <div className="flex flex-wrap gap-2">
-        <Toggle value={season} onChange={setSeason} options={[["summer", "Summer (Jun–Oct)"], ["winter", "Winter (Nov–May)"]]} />
-        <Toggle value={plan} onChange={setPlan} options={[["standard", "Standard"], ["care", "CARE pricing"]]} />
+        <Toggle value={season} onChange={(value) => { setTipsLoading(true); setTipsError(null); setSeason(value); }} options={[["summer", "Summer (Jun–Oct)"], ["winter", "Winter (Nov–May)"]]} />
+        <Toggle value={plan} onChange={(value) => { setTipsLoading(true); setTipsError(null); setPlan(value); }} options={[["standard", "Standard"], ["care", "CARE pricing"]]} />
       </div>
 
       {/* Headline numbers */}
