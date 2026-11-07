@@ -182,3 +182,54 @@
   .upload-bottom { align-items: flex-start; flex-direction: column; }
   .total-card [data-slot="card-content"] { min-height: 170px; padding: 20px; }
 }
+
+.power-pulse {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
+  gap: 24px;
+  margin: 0;
+  padding: 21px;
+  border: 1px solid #e6e5dc;
+  border-radius: 13px;
+  background: rgba(255,255,255,.82);
+  box-shadow: 0 2px 8px rgba(29, 51, 40, .035);
+}
+.power-pulse-heading { display: flex; align-items: center; gap: 11px; }
+.power-pulse-icon { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border-radius: 11px; background: #e5f1e6; color: #286247; }
+.power-pulse-heading .eyebrow { margin-bottom: 3px; }
+.power-pulse-heading h2 { margin: 0; color: #123b35; font-size: 19px; font-weight: 600; line-height: 1.25; }
+.power-pulse-controls { display: grid; gap: 15px; margin-top: 21px; }
+.power-pulse-control { display: grid; gap: 6px; }
+.power-pulse-label-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #5e6d69; font-size: 12px; }
+.power-pulse-label-row strong { color: #123b35; font-size: 12px; font-variant-numeric: tabular-nums; }
+.power-pulse-control input { width: 100%; height: 6px; accent-color: #287963; cursor: pointer; }
+.power-pulse-range-labels { display: flex; justify-content: space-between; color: #849087; font-size: 10px; }
+.power-pulse-options { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 15px; }
+.power-pulse-option-group { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid #e6e5dc; border-radius: 9px; background: #f7f8f5; }
+.power-pulse-option-group button { height: 29px; padding: 0 10px; font-size: 11px; }
+.power-pulse-rate-context { align-self: center; color: #68736c; font-size: 11px; text-transform: capitalize; }
+.power-pulse-meter { display: flex; min-width: 0; flex-direction: column; justify-content: center; padding: 18px; border-radius: 11px; background: #123b35; color: #fff; }
+.power-pulse-meter-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.power-pulse-meter-label { color: #c8dcd2; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+.power-pulse-period { flex: 0 0 auto; padding: 4px 7px; border-radius: 99px; background: rgba(217,242,227,.14); color: #d9f2e3; font-size: 9px; font-weight: 700; }
+.power-pulse-period.is-peak { background: rgba(244,199,107,.18); color: #f4c76b; }
+.power-pulse-cost { margin-top: 8px; color: #fff; font-size: 37px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.power-pulse-rate { margin-top: 2px; color: #c8dcd2; font-size: 11px; font-variant-numeric: tabular-nums; }
+.power-pulse-wave { display: flex; height: 38px; align-items: center; gap: 3px; margin-top: 12px; overflow: hidden; }
+.power-pulse-wave span { display: block; min-width: 3px; flex: 1; transform: scaleY(.35); transform-origin: center; border-radius: 99px; background: linear-gradient(180deg, #f4c76b, #70c69a); animation: powerFlow 1.5s ease-in-out infinite alternate; }
+.power-pulse-note { margin: 8px 0 0; color: #c8dcd2; font-size: 10px; line-height: 1.4; }
+
+@keyframes powerFlow {
+  from { opacity: .48; transform: scaleY(.22); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+
+@media (max-width: 700px) {
+  .power-pulse { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 16px; }
+  .power-pulse-options { justify-content: flex-start; }
+  .power-pulse-meter { min-height: 172px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .power-pulse-wave span { animation: none; transform: scaleY(.65); }
+}

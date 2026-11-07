@@ -30,7 +30,7 @@ export default function Home() {
         <Tabs defaultValue="bill" className="dashboard-tabs">
           <TabsList className="nav-tabs">
             <TabsTrigger value="bill">Bill overview</TabsTrigger>
-            <TabsTrigger value="when">Best time to use power</TabsTrigger>
+            <TabsTrigger value="when">Recommendations</TabsTrigger>
             <TabsTrigger value="ask">Ask WattSplit</TabsTrigger>
           </TabsList>
           <TabsContent value="bill"><BillAnalyzer /></TabsContent>

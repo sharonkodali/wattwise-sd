@@ -20,6 +20,7 @@ import {
   type Season,
 } from "@/lib/analysis";
 import type { Recommendation } from "@/app/api/recommend/route";
+import { PowerPulse } from "@/components/PowerPulse";
 import { CostByHourChart, GridChart, SeasonPlanChart } from "./charts";
 
 export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
@@ -151,6 +152,8 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
           {SOURCES.rates} (standard and CARE tables). Excludes baseline credit, taxes, and San Diego Community Power generation rates.
         </CardFooter>
       </Card>
+
+      <PowerPulse season={season} plan={plan} />
     </div>
   );
 }
