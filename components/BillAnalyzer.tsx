@@ -65,10 +65,19 @@ export function BillAnalyzer() {
     setLoading(message);
     setError(null);
     try {
-      const body = new FormData();
-      body.append("file", file);
-      const res = await fetch("/api/analyze-bill", { method: "POST", body });
-      const data = await readJson(res);
+      const send = async () => {
+        const body = new FormData();
+        body.append("file", file);
+        const res = await fetch("/api/analyze-bill", { method: "POST", body });
+        return { res, data: await readJson(res) };
+      };
+      let { res, data } = await send();
+      if (res.status >= 500) {
+        // Gemini hiccup: wait a moment and try once more before showing an error.
+        setLoading("Still reading... one more try");
+        await new Promise((r) => setTimeout(r, 2500));
+        ({ res, data } = await send());
+      }
       if (!res.ok) throw new Error(data.error ?? "Could not read that bill.");
       showResults(data);
       return true;

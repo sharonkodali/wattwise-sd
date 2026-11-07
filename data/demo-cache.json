@@ -1,0 +1,209 @@
+{
+  "_note": "Last good Gemini results for the two demo bills, keyed by SHA-256 of the file. Used ONLY if Gemini fails on that exact file. Regenerate if the PDFs change.",
+  "bills": {
+    "305c1a63c73bfafbeaf62fa34b6f44e6e3390aba167e147247e8a6acd83dfa2a": {
+      "source": "WattWise sample bill (public/sample-bill.pdf)",
+      "analysis": {
+        "billingPeriod": "09/12/2026 - 10/11/2026",
+        "ratePlan": "TOU-DR1",
+        "provider": "SDCP",
+        "totalDue": 171.1,
+        "kwhByPeriod": {
+          "onPeak": 62,
+          "offPeak": 180,
+          "superOffPeak": 148
+        },
+        "lineItems": [
+          {
+            "name": "On-Peak (4pm-9pm)",
+            "amount": 19.22,
+            "category": "delivery",
+            "plainEnglish": "This is the cost to deliver power during the most expensive time of day, 4 PM to 9 PM."
+          },
+          {
+            "name": "Off-Peak",
+            "amount": 42.3,
+            "category": "delivery",
+            "plainEnglish": "This is the cost to deliver power during standard hours when demand is lower."
+          },
+          {
+            "name": "Super Off-Peak",
+            "amount": 24.42,
+            "category": "delivery",
+            "plainEnglish": "This is the cost to deliver power during the cheapest hours, usually late at night or early morning."
+          },
+          {
+            "name": "Base Services Charge",
+            "amount": 24,
+            "category": "delivery",
+            "plainEnglish": "A fixed monthly fee that covers the basic costs of maintaining the grid, like your meter and power lines."
+          },
+          {
+            "name": "Baseline Adjustment Credit",
+            "amount": -23.1,
+            "category": "credit",
+            "plainEnglish": "A discount for staying within a basic amount of energy usage for your area."
+          },
+          {
+            "name": "SDG&E Electric Generation (390 kWh)",
+            "amount": 52.1,
+            "category": "generation",
+            "plainEnglish": "This is the cost of the electricity itself, which is then canceled out by the credit below."
+          },
+          {
+            "name": "SDG&E Generation Credit",
+            "amount": -52.1,
+            "category": "credit",
+            "plainEnglish": "This credit removes the SDG&E generation charge because you are buying your power from San Diego Community Power instead."
+          },
+          {
+            "name": "San Diego Community Power - PowerOn (390 kWh)",
+            "amount": 58.4,
+            "category": "generation",
+            "plainEnglish": "This is the actual cost for the electricity you used, provided by San Diego Community Power."
+          },
+          {
+            "name": "Power Charge Indifference Adjustment (PCIA)",
+            "amount": 9.8,
+            "category": "fees_taxes",
+            "plainEnglish": "A fee to cover costs for older power contracts that SDG&E signed before you switched to a community provider."
+          },
+          {
+            "name": "Wildfire Fund Charge",
+            "amount": 2.15,
+            "category": "fees_taxes",
+            "plainEnglish": "A state-mandated fee that helps pay for wildfire safety and liability costs."
+          },
+          {
+            "name": "State Regulatory Fees & Franchise Fees",
+            "amount": 3.41,
+            "category": "fees_taxes",
+            "plainEnglish": "Fees paid to the state and local government for the right to operate and provide energy services."
+          },
+          {
+            "name": "Electric Users Tax",
+            "amount": 10.5,
+            "category": "fees_taxes",
+            "plainEnglish": "A tax collected by SDG&E on behalf of your local city government."
+          }
+        ],
+        "summary": "Your bill reflects a total usage of 390 kWh, with about 16% of that energy consumed during the expensive 4-9 PM peak window. Your costs are driven by a mix of delivery fees, the generation cost from San Diego Community Power, and standard state taxes.",
+        "topSavingTip": "Since you used 62 kWh during the 4-9 PM peak window, try shifting heavy appliance use like laundry or dishwashing to the Super Off-Peak hours to lower your delivery costs.",
+        "checks": {
+          "lineItemsSum": 171.1,
+          "matchesTotal": true,
+          "totalKwh": 390,
+          "peakSharePct": 15.9
+        }
+      }
+    },
+    "9520a10531d258ef64612dcde71089c8e3fd0c56547491af3aaf858349abb97f": {
+      "source": "SDG&E public sample bill (GAS_GHG_Line_Item_Sample_v3, pages 1-3)",
+      "analysis": {
+        "billingPeriod": "Feb 28, 2019 - Apr 1, 2019",
+        "ratePlan": "TOU-DR1-Residential",
+        "provider": "SDG&E",
+        "totalDue": 229.52,
+        "kwhByPeriod": {
+          "onPeak": 179,
+          "offPeak": 322,
+          "superOffPeak": 256
+        },
+        "lineItems": [
+          {
+            "name": "Gas Service",
+            "amount": 45.55,
+            "category": "gas",
+            "plainEnglish": "This is the cost for the natural gas you used during this billing period."
+          },
+          {
+            "name": "Gas Energy Charge (31 of 32 Days)",
+            "amount": 13.73,
+            "category": "gas",
+            "plainEnglish": "This is a portion of your gas usage charge based on the rate active for most of the month."
+          },
+          {
+            "name": "Gas Energy Charge (1 of 32 Days)",
+            "amount": 2.32,
+            "category": "gas",
+            "plainEnglish": "This is a portion of your gas usage charge based on a rate change that occurred for the final day."
+          },
+          {
+            "name": "California Climate Credit (Gas)",
+            "amount": -33.94,
+            "category": "credit",
+            "plainEnglish": "This is a state-mandated credit to help lower your energy costs."
+          },
+          {
+            "name": "Public Purpose Program (Gas)",
+            "amount": 2.47,
+            "category": "fees_taxes",
+            "plainEnglish": "This fee funds state-mandated energy efficiency and low-income assistance programs."
+          },
+          {
+            "name": "State Regulatory Fee (Gas)",
+            "amount": 0.07,
+            "category": "fees_taxes",
+            "plainEnglish": "This is a small fee to cover the costs of state utility regulation."
+          },
+          {
+            "name": "Electricity Delivery (31 Day Charge)",
+            "amount": 227.14,
+            "category": "delivery",
+            "plainEnglish": "This is the cost for SDG&E to maintain the power lines and deliver electricity to your home."
+          },
+          {
+            "name": "Electricity Delivery (1 Day Charge)",
+            "amount": 15.75,
+            "category": "delivery",
+            "plainEnglish": "This is the delivery cost for the final day of your billing cycle."
+          },
+          {
+            "name": "DWR Bond Charge",
+            "amount": 3.81,
+            "category": "fees_taxes",
+            "plainEnglish": "This is a state charge to pay off bonds from the 2001 energy crisis."
+          },
+          {
+            "name": "Electricity Generation (31 Day Charge)",
+            "amount": 47.18,
+            "category": "generation",
+            "plainEnglish": "This is the cost for the actual electricity you consumed."
+          },
+          {
+            "name": "Electricity Generation (1 Day Charge)",
+            "amount": 3.61,
+            "category": "generation",
+            "plainEnglish": "This is the cost for the electricity used on the final day of the cycle."
+          },
+          {
+            "name": "DWR Revenue Adjustment",
+            "amount": -0.02,
+            "category": "credit",
+            "plainEnglish": "This is a small adjustment related to state energy bond collections."
+          },
+          {
+            "name": "Baseline Adjustment Credit",
+            "amount": -67.44,
+            "category": "credit",
+            "plainEnglish": "This is a discount for staying within your baseline energy allowance."
+          },
+          {
+            "name": "California Climate Credit (Electric)",
+            "amount": -31.32,
+            "category": "credit",
+            "plainEnglish": "This is a state-mandated credit to help lower your energy costs."
+          }
+        ],
+        "summary": "Your bill was driven by 757 kWh of electricity usage and 45 therms of gas. About 24% of your electricity was used during the expensive 4-9 PM on-peak window.",
+        "topSavingTip": "Since you are on a Time-of-Use plan, try to shift your heavy appliance use, like laundry or dishwashing, to before 4 PM or after 9 PM to avoid the highest rates.",
+        "checks": {
+          "lineItemsSum": 228.91,
+          "matchesTotal": true,
+          "totalKwh": 757,
+          "peakSharePct": 23.6
+        }
+      }
+    }
+  }
+}

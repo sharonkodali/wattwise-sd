@@ -26,6 +26,9 @@ to `gemini-3.1-flash-lite` and `gemini-3.6-flash` if Gemini is busy. Override wi
 ```
 - `checks` is calculated by our code, not Gemini. Show a small warning if `matchesTotal` is false.
 - **400** bad/missing file · **413** too large · **422** not a utility bill · **500** Gemini error.
+- **Demo safety net:** if Gemini fails on one of our two demo bills (`public/sample-bill.pdf` or SDG&E's public
+  sample), the server returns that bill's last good result from `data/demo-cache.json` with `"cached": true`.
+  Re-uploading the same file to a warm server also returns instantly. The page retries once on any 5xx.
 - Typical time: ~10 s.
 
 ## `POST /api/translate` — translate a bill analysis

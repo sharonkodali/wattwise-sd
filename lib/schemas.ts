@@ -16,6 +16,8 @@ export type BillAnalysis = {
   lineItems: LineItem[];
   summary: string;
   topSavingTip: string;
+  /** true when Gemini was unavailable and the server returned the saved result for a known demo bill. */
+  cached?: boolean;
   /** Added by the server after extraction (not by Gemini). */
   checks?: {
     lineItemsSum: number;

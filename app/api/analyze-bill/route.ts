@@ -1,9 +1,17 @@
 // POST multipart form-data { file } -> BillAnalysis. OWNER: Person 1.
+import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { friendlyError, generateJson, SDGE_GLOSSARY } from "@/lib/gemini";
 import { billAnalysisJsonSchema, type BillAnalysis } from "@/lib/schemas";
+import demoCache from "@/data/demo-cache.json";
 
 export const maxDuration = 120;
+
+// Last good results for our two demo bills, keyed by file SHA-256. Used only when Gemini fails on that exact file,
+// so a Gemini outage during judging can't break the demo. Responses say `cached: true` when this is used.
+const DEMO_RESULTS = demoCache.bills as Record<string, { source: string; analysis: BillAnalysis }>;
+// Warm-instance cache: re-uploading the same file returns instantly.
+const recent = new Map<string, BillAnalysis>();
 
 const ALLOWED = ["application/pdf", "image/png", "image/jpeg", "image/webp", "image/heic", "image/heif"];
 // Vercel rejects request bodies over 4.5 MB before they reach this code. The frontend should shrink big photos first.
@@ -33,6 +41,7 @@ GLOSSARY${SDGE_GLOSSARY}`;
 type GeminiBill = BillAnalysis & { isUtilityBill: boolean };
 
 export async function POST(req: Request) {
+  let hash = "";
   try {
     const form = await req.formData();
     const file = form.get("file");
@@ -44,7 +53,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "File too large (max 4.4 MB). Try a smaller photo or the PDF." }, { status: 413 });
     }
 
-    const data = Buffer.from(await file.arrayBuffer()).toString("base64");
+    const bytes = Buffer.from(await file.arrayBuffer());
+    hash = createHash("sha256").update(bytes).digest("hex");
+    const seen = recent.get(hash);
+    if (seen) return NextResponse.json(seen);
+
+    const data = bytes.toString("base64");
     const { isUtilityBill, ...bill } = await generateJson<GeminiBill>({
       system: SYSTEM_PROMPT,
       parts: [{ inlineData: { mimeType: file.type, data } }, { text: "Analyze this bill." }],
@@ -67,9 +81,16 @@ export async function POST(req: Request) {
         peakSharePct: totalKwh ? +((onPeak / totalKwh) * 100).toFixed(1) : 0,
       },
     };
+    if (recent.size > 100) recent.clear();
+    recent.set(hash, result);
     return NextResponse.json(result);
   } catch (err) {
     console.error(err);
+    const demo = hash ? DEMO_RESULTS[hash] : undefined;
+    if (demo) {
+      console.warn(`[analyze-bill] Gemini failed; serving saved result for ${demo.source}`);
+      return NextResponse.json({ ...demo.analysis, cached: true });
+    }
     return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
   }
 }
