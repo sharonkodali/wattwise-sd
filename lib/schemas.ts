@@ -12,6 +12,8 @@ export type BillAnalysis = {
   ratePlan: string;
   provider: "SDCP" | "SDG&E";
   totalDue: number;
+  /** Unpaid balance carried over from earlier bills (previous balance minus payments), 0 if none. Part of totalDue. */
+  previousBalance?: number;
   kwhByPeriod: { onPeak: number; offPeak: number; superOffPeak: number };
   lineItems: LineItem[];
   summary: string;
@@ -47,6 +49,7 @@ export const billAnalysisJsonSchema = {
     ratePlan: { type: "string" },
     provider: { type: "string", enum: ["SDCP", "SDG&E"] },
     totalDue: { type: "number" },
+    previousBalance: { type: "number", description: "previous balance minus payments received; 0 if none" },
     kwhByPeriod: {
       type: "object",
       properties: {
@@ -75,7 +78,7 @@ export const billAnalysisJsonSchema = {
     summary: { type: "string" },
     topSavingTip: { type: "string" },
   },
-  required: ["isUtilityBill", "billingPeriod", "ratePlan", "provider", "totalDue", "kwhByPeriod", "lineItems", "summary", "topSavingTip"],
+  required: ["isUtilityBill", "billingPeriod", "ratePlan", "provider", "totalDue", "previousBalance", "kwhByPeriod", "lineItems", "summary", "topSavingTip"],
 } as const;
 
 export const recommendationsJsonSchema = {

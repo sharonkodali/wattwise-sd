@@ -21,6 +21,7 @@ type Labels = {
   sampleBill: string;
   amountsStay: string;
   totalMismatch: string;
+  includesPrevious: string;
   categories: Record<LineItem["category"], string>;
 };
 
@@ -44,6 +45,7 @@ export const UI_LABELS: Record<Language, Labels> = {
     sampleBill: "Sample bill · try the layout",
     amountsStay: "Amounts and usage stay the same when translated.",
     totalMismatch: "Heads up: the charges we found don’t add up exactly to the total. Some lines may be on pages we didn’t receive.",
+    includesPrevious: "Includes {amount} unpaid from earlier bills",
     categories: { delivery: "Delivery", generation: "Generation", fees_taxes: "Fees & taxes", credit: "Credit", gas: "Gas", other: "Other" },
   },
   Spanish: {
@@ -65,6 +67,7 @@ export const UI_LABELS: Record<Language, Labels> = {
     sampleBill: "Factura de ejemplo",
     amountsStay: "Los montos y el consumo no cambian al traducir.",
     totalMismatch: "Atención: los cargos encontrados no suman exactamente el total. Puede haber cargos en páginas que no recibimos.",
+    includesPrevious: "Incluye {amount} pendiente de facturas anteriores",
     categories: { delivery: "Entrega", generation: "Generación", fees_taxes: "Cargos e impuestos", credit: "Crédito", gas: "Gas", other: "Otro" },
   },
   Vietnamese: {
@@ -86,6 +89,7 @@ export const UI_LABELS: Record<Language, Labels> = {
     sampleBill: "Hóa đơn mẫu",
     amountsStay: "Số tiền và mức sử dụng giữ nguyên khi dịch.",
     totalMismatch: "Lưu ý: các khoản phí tìm thấy không cộng đúng bằng tổng. Có thể một số khoản nằm ở trang chúng tôi chưa nhận.",
+    includesPrevious: "Bao gồm {amount} chưa thanh toán từ hóa đơn trước",
     categories: { delivery: "Truyền tải", generation: "Sản xuất điện", fees_taxes: "Phí & thuế", credit: "Khoản giảm", gas: "Khí đốt", other: "Khác" },
   },
   Tagalog: {
@@ -107,6 +111,7 @@ export const UI_LABELS: Record<Language, Labels> = {
     sampleBill: "Halimbawang bill",
     amountsStay: "Hindi nagbabago ang halaga at gamit kapag isinalin.",
     totalMismatch: "Paalala: hindi eksaktong tumutugma sa kabuuan ang mga singil na nakita. Maaaring may singil sa pahinang hindi namin natanggap.",
+    includesPrevious: "Kasama ang {amount} na hindi pa nababayaran mula sa naunang bill",
     categories: { delivery: "Paghahatid", generation: "Paglikha ng kuryente", fees_taxes: "Bayarin at buwis", credit: "Credit", gas: "Gas", other: "Iba pa" },
   },
   "Chinese (Simplified)": {
@@ -128,6 +133,7 @@ export const UI_LABELS: Record<Language, Labels> = {
     sampleBill: "示例账单",
     amountsStay: "翻译后金额和用电量保持不变。",
     totalMismatch: "提示：识别到的费用与总额不完全一致，部分费用可能在我们未收到的页面上。",
+    includesPrevious: "含以往账单未付金额 {amount}",
     categories: { delivery: "输电", generation: "发电", fees_taxes: "费用和税", credit: "抵扣", gas: "燃气", other: "其他" },
   },
   Arabic: {
@@ -149,6 +155,7 @@ export const UI_LABELS: Record<Language, Labels> = {
     sampleBill: "فاتورة نموذجية",
     amountsStay: "تبقى المبالغ والاستهلاك كما هي عند الترجمة.",
     totalMismatch: "تنبيه: الرسوم التي وجدناها لا تساوي الإجمالي تمامًا. قد تكون بعض البنود في صفحات لم نستلمها.",
+    includesPrevious: "يشمل {amount} غير مدفوعة من فواتير سابقة",
     categories: { delivery: "التوصيل", generation: "التوليد", fees_taxes: "رسوم وضرائب", credit: "رصيد", gas: "غاز", other: "أخرى" },
   },
 };

@@ -173,6 +173,9 @@ export function BillAnalyzer() {
                   <p dir="ltr" className="total-amount mt-2 tabular-nums">
                     {formatUsd(bill.totalDue)}
                   </p>
+                  {(bill.previousBalance ?? 0) > 0 && (
+                    <p className="total-meta mt-2">{t.includesPrevious.replace("{amount}", formatUsd(bill.previousBalance!))}</p>
+                  )}
                 </div>
 
                 <div className="grid gap-2 sm:grid-cols-2">

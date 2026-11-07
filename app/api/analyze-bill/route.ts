@@ -26,7 +26,9 @@ EXTRACTION RULES
 - Never invent numbers. If a value is not on the bill, use 0 (or "" for text).
 - "provider" is "SDCP" if San Diego Community Power (or any Community Choice provider) supplies generation, else "SDG&E".
 - "kwhByPeriod": kWh used on-peak (4-9 PM), off-peak and super off-peak, from the usage lines.
-- "totalDue": the amount due for this statement.
+- "totalDue": the total amount due for this statement.
+- "previousBalance": unpaid amount carried over from earlier bills = previous balance minus payments received
+  (0 if fully paid or not shown). Previous balance, payments and subtotals are NOT line items.
 - category: delivery (SDG&E wires/usage/base services), generation (power supply), credit (any negative line),
   fees_taxes (PCIA, wildfire fund, taxes, regulatory/franchise fees), gas, other.
 
@@ -76,7 +78,8 @@ export async function POST(req: Request) {
       ...bill,
       checks: {
         lineItemsSum,
-        matchesTotal: Math.abs(lineItemsSum - bill.totalDue) <= 1,
+        // Current charges = amount due minus any unpaid balance carried over from earlier bills.
+        matchesTotal: Math.abs(lineItemsSum - (bill.totalDue - (bill.previousBalance ?? 0))) <= 1,
         totalKwh,
         peakSharePct: totalKwh ? +((onPeak / totalKwh) * 100).toFixed(1) : 0,
       },
