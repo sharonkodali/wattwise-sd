@@ -1,52 +1,41 @@
 # WattWise SD
 
 **Understand your SDG&E bill, find the expensive hours, and keep more of your money.**
+
 Built at Hack for Humanity @ AI Collective UC San Diego (Nov 7, 2026).
 
-## The problem
-San Diegans pay some of the highest electricity rates in the US. The SDG&E bill splits charges between SDG&E and
-San Diego Community Power, uses jargon (PCIA, Base Services Charge, Wildfire Fund), and charges far more from 4–9 PM.
-Most people can't tell what drives their bill, when power is most expensive, or that they may qualify for CARE (~30–35% off).
+## The Problem
 
-## What it does
+San Diegans face high electricity costs and complicated utility bills. SDG&E bills can include charges from both SDG&E and San Diego Community Power, along with confusing terms like PCIA, Base Services Charge, and Wildfire Fund.
+
+Electricity is also more expensive during peak hours (4–9 PM), but many residents don't know which habits contribute most to their bills or whether they qualify for assistance programs.
+
+## What It Does
+
 | Tab | What it does |
 | --- | --- |
-| **Bill Analyzer** | Upload a bill PDF or photo → every charge explained in plain English → translate into Spanish, Vietnamese, Tagalog, Chinese, Arabic |
-| **When to Use Power** | Public data on a typical San Diego home + SDG&E time-of-use rates → cost-by-hour charts → Gemini tips grounded in our numbers |
-| **Ask WattWise** | Describe your home and habits → personal savings plan + CARE/FERA hint |
+| **Bill Analyzer** | Upload a bill PDF or photo, understand charges in plain English, and translate explanations into Spanish, Vietnamese, Tagalog, Chinese, and Arabic. |
+| **When to Use Power** | Explore typical San Diego electricity usage, time-of-use rates, cost-by-hour charts, and energy-saving tips. |
+| **Ask WattWise** | Describe your household and energy habits to receive a personalized savings plan and information about CARE/FERA assistance programs. |
 
-## How we used the Gemini API
-1. **Reads documents directly** — bill PDFs and phone photos go straight to Gemini (`app/api/analyze-bill`).
-2. **Structured output** — `responseJsonSchema` forces typed JSON the UI renders reliably (`lib/schemas.ts`).
-3. **Plain language + translation** — jargon → simple English → 5 languages, numbers unchanged (`app/api/translate`).
-4. **Grounded tips** — Gemini only explains numbers our code calculated from public data (`lib/analysis.ts` → `app/api/recommend`).
-5. **Personal plans from free text** — `app/api/ask`.
+## How We Used the Gemini API
 
-Prompts are in [`docs/GEMINI_USAGE.md`](docs/GEMINI_USAGE.md).
+1. **Document analysis** — Bill PDFs and phone photos are sent to Gemini for analysis (`app/api/analyze-bill`).
+2. **Structured output** — `responseJsonSchema` produces structured JSON that the frontend can render reliably (`lib/schemas.ts`).
+3. **Plain language and translation** — Explains electricity terminology in simple language and supports multiple languages (`app/api/translate`).
+4. **Grounded recommendations** — Gemini explains calculations based on data processed by our application (`lib/analysis.ts` → `app/api/recommend`).
+5. **Personalized plans** — Uses household descriptions to generate energy-saving suggestions and CARE/FERA assistance information (`app/api/ask`).
 
-## How we used GitHub Copilot
-See [`docs/COPILOT_LOG.md`](docs/COPILOT_LOG.md) for every example, who did it, and time saved.
-<!-- TODO(P4): summarize the 3-5 best Copilot moments here with screenshots. -->
+Our prompts and Gemini API usage examples are documented in [`docs/GEMINI_USAGE.md`](docs/GEMINI_USAGE.md).
 
-## Data sources
-- SDG&E TOU-DR1 Total Rates Table (sdge.com regulatory documents)
-- OpenEI — Commercial and Residential Hourly Load Profiles for all TMY3 Locations (San Diego Lindbergh Field, residential)
-- CAISO Today's Outlook (grid demand and supply mix)
-- SDG&E CARE and FERA program pages
+## How We Used GitHub Copilot
 
-> Files in `data/` currently hold **sample placeholder values** — replace before the demo.
+We used GitHub Copilot to support development, review frontend components, and improve the demo experience.
 
-## Run it locally
-```bash
-npm install
-cp .env.example .env.local   # then paste your Gemini API key
-npm run dev                  # http://localhost:3000
-```
+See [`docs/COPILOT_LOG.md`](docs/COPILOT_LOG.md) for examples of our Copilot interactions, changes made, and estimated time saved.
 
-## Team
-| Person | Role |
-| --- | --- |
-| P1 — ____ | Lead, Bill Analyzer backend, deploys |
-| P2 — ____ | Frontend, Bill Analyzer UI |
-| P3 — ____ | Data, analysis, charts |
-| P4 — ____ | Ask WattWise, README, demo |
+Screenshots of selected Copilot interactions are stored in `docs/screenshots/`.
+
+## Data Sources
+
+- SDG&E Time
