@@ -16,7 +16,8 @@ function isRetryable(err: unknown) {
 export function friendlyError(err: unknown) {
   if (isRetryable(err)) return "Gemini is busy right now. Please try again in a few seconds.";
   const msg = err instanceof Error ? err.message : "Something went wrong";
-  return msg.length > 200 ? "Something went wrong talking to Gemini." : msg;
+  // Raw API errors (JSON blobs, long stack-like text) are logged on the server, not shown to users.
+  return msg.length > 200 || msg.trim().startsWith("{") ? "Something went wrong talking to Gemini." : msg;
 }
 
 let client: GoogleGenAI | null = null;
