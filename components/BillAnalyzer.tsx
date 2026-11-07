@@ -1,102 +1,145 @@
 "use client";
 // Tab 1: Bill Analyzer (MAIN feature). OWNER: Person 2 (UI) + Person 1 (API).
-// TODO(P2): drag-and-drop, kWh-by-period donut chart, nicer ChargeCards, mobile layout.
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Lightbulb } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { BillUpload } from "@/components/BillUpload";
+import { ChargeCard, formatUsd } from "@/components/ChargeCard";
+import { KwhDonut } from "@/components/KwhDonut";
+import { LanguageSelect, type Language } from "@/components/LanguageSelect";
 import type { BillAnalysis } from "@/lib/schemas";
 import { mockBill } from "@/lib/mock-bill";
 
-import { SUPPORTED_LANGUAGES as LANGUAGES } from "@/lib/schemas";
+const ALLOWED = ["application/pdf", "image/png", "image/jpeg", "image/webp", "image/heic"];
 
 export function BillAnalyzer() {
   const [original, setOriginal] = useState<BillAnalysis | null>(null);
   const [bill, setBill] = useState<BillAnalysis | null>(null);
+  const [language, setLanguage] = useState<Language>("English");
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  function showSample() {
+    setOriginal(mockBill);
+    setBill(mockBill);
+    setLanguage("English");
+    setError(null);
+  }
+
   async function upload(file: File) {
-    setLoading("Reading your bill..."); setError(null);
+    if (!ALLOWED.includes(file.type) && !file.name.toLowerCase().endsWith(".pdf")) {
+      setError("Use a PDF or a photo (JPG, PNG, WEBP, or HEIC).");
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      setError("That file is over 15 MB. Try a smaller photo or PDF.");
+      return;
+    }
+    setLoading("Reading your bill...");
+    setError(null);
     try {
       const body = new FormData();
       body.append("file", file);
       const res = await fetch("/api/analyze-bill", { method: "POST", body });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setOriginal(data); setBill(data);
-    } catch (e) { setError(e instanceof Error ? e.message : "Something went wrong"); }
-    finally { setLoading(null); }
+      if (!res.ok) throw new Error(data.error ?? "Could not read that bill.");
+      setOriginal(data);
+      setBill(data);
+      setLanguage("English");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setLoading(null);
+    }
   }
 
-  async function translate(language: string) {
+  async function translate(next: Language) {
     if (!original) return;
-    if (language === "English") return setBill(original);
-    setLoading(`Translating to ${language}...`); setError(null);
+    setLanguage(next);
+    if (next === "English") {
+      setBill(original);
+      return;
+    }
+    setLoading(`Translating to ${next}...`);
+    setError(null);
     try {
       const res = await fetch("/api/translate", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ analysis: original, language }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ analysis: original, language: next }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new Error(data.error ?? "Translation failed");
       setBill(data);
-    } catch (e) { setError(e instanceof Error ? e.message : "Translation failed"); }
-    finally { setLoading(null); }
+    } catch (e) {
+      setLanguage("English");
+      setBill(original);
+      setError(e instanceof Error ? e.message : "Translation failed");
+    } finally {
+      setLoading(null);
+    }
   }
 
+  const provider =
+    bill?.provider === "SDCP" ? "San Diego Community Power" : "SDG&E";
+
   return (
-    <div className="space-y-4 pt-4">
-      <Card>
-        <CardHeader><CardTitle>Upload your SDG&amp;E bill (PDF or photo)</CardTitle></CardHeader>
-        <CardContent className="flex flex-wrap items-center gap-3">
-          <input type="file" accept="application/pdf,image/*" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
-          <Button
-            variant="outline"
-            disabled={!!loading}
-            onClick={async () => {
-              const blob = await (await fetch("/sample-bill.pdf")).blob();
-              upload(new File([blob], "sample-bill.pdf", { type: "application/pdf" }));
-            }}
-          >
-            Try sample bill (PDF)
-          </Button>
-          <Button variant="ghost" onClick={() => { setOriginal(mockBill); setBill(mockBill); }}>Offline mock</Button>
-          {original && (
-            <select className="rounded-md border px-2 py-1" onChange={(e) => translate(e.target.value)} defaultValue="English">
-              {LANGUAGES.map((l) => <option key={l}>{l}</option>)}
-            </select>
-          )}
-          {loading && <span className="text-sm text-muted-foreground">{loading}</span>}
-          {error && <span className="text-sm text-red-600">{error}</span>}
-        </CardContent>
-      </Card>
+    <div className="space-y-4 pt-3">
+      <BillUpload loading={loading} error={error} onFile={upload} onSample={showSample} />
 
       {bill && (
-        <>
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground">{bill.billingPeriod} · {bill.ratePlan} · {bill.provider === "SDCP" ? "San Diego Community Power" : "SDG&E"}</p>
-              <p className="text-4xl font-bold">${bill.totalDue.toFixed(2)}</p>
-              <p className="mt-2">{bill.summary}</p>
-              <p className="mt-2 font-medium">Top tip: {bill.topSavingTip}</p>
-            </CardContent>
-          </Card>
+        <div className="space-y-4" dir={language === "Arabic" ? "rtl" : "ltr"}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">
+              Translate the words. Dollar amounts and kWh stay the same.
+            </p>
+            <LanguageSelect value={language} disabled={loading !== null} onChange={translate} />
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+            <Card className="bg-gradient-to-br from-primary to-[oklch(0.34_0.07_230)] text-primary-foreground">
+              <CardContent className="flex h-full flex-col justify-center gap-2 py-2">
+                <p className="text-sm text-primary-foreground/80">Total due</p>
+                <p dir="ltr" className="text-5xl font-bold tracking-tight tabular-nums sm:text-6xl">
+                  {formatUsd(bill.totalDue)}
+                </p>
+                <p className="text-sm text-primary-foreground/85">
+                  {bill.billingPeriod} · {bill.ratePlan} · {provider}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent>
+                <p className="mb-1 text-sm font-medium">kWh by time of day</p>
+                <KwhDonut kwhByPeriod={bill.kwhByPeriod} />
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Card>
+              <CardContent>
+                <p className="text-sm font-medium text-muted-foreground">Summary</p>
+                <p className="mt-1 text-base leading-relaxed">{bill.summary}</p>
+              </CardContent>
+            </Card>
+            <Card className="border-accent/60 bg-accent/25">
+              <CardContent>
+                <p className="flex items-center gap-1.5 text-sm font-medium">
+                  <Lightbulb className="size-4" aria-hidden />
+                  Top tip
+                </p>
+                <p className="mt-1 text-base leading-relaxed">{bill.topSavingTip}</p>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="grid gap-3 sm:grid-cols-2">
             {bill.lineItems.map((item, i) => (
-              <Card key={i}>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="text-base">{item.name}</CardTitle>
-                  <span className={item.amount < 0 ? "text-green-600" : ""}>${item.amount.toFixed(2)}</span>
-                </CardHeader>
-                <CardContent>
-                  <Badge variant="secondary" className="mb-2">{item.category.replace("_", " & ")}</Badge>
-                  <p className="text-sm">{item.plainEnglish}</p>
-                </CardContent>
-              </Card>
+              <ChargeCard key={`${item.name}-${i}`} item={item} />
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
