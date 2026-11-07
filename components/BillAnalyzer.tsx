@@ -5,6 +5,7 @@ import { ArrowUpRight, Lightbulb, Users, ShieldCheck, TrendingUp, Zap, Clock3 } 
 import { Card, CardContent } from "@/components/ui/card";
 import { BillUpload } from "@/components/BillUpload";
 import { ChargeCard, formatUsd } from "@/components/ChargeCard";
+import { CountUp } from "@/components/CountUp";
 import { KwhDonut } from "@/components/KwhDonut";
 import { LanguageSelect, type Language } from "@/components/LanguageSelect";
 import type { BillAnalysis } from "@/lib/schemas";
@@ -151,7 +152,7 @@ export function BillAnalyzer() {
       <BillUpload loading={loading} error={error} onFile={upload} onSample={showSample} />
 
       {bill && (
-        <div ref={resultsRef} className="scroll-mt-4 space-y-4" dir={language === "Arabic" ? "rtl" : "ltr"}>
+        <div ref={resultsRef} key={`${original?.billingPeriod}-${original?.totalDue}`} className="results-stack scroll-mt-24 space-y-4" dir={language === "Arabic" ? "rtl" : "ltr"}>
           <div className="insight-strip">
             <div className="insight-item"><span className="insight-icon"><TrendingUp size={16} /></span><div><small>{t.billingPeriod}</small><strong>{bill.billingPeriod.split("(")[0].trim()}</strong></div></div>
             <div className="insight-item"><span className="insight-icon amber"><Clock3 size={16} /></span><div><small>{t.peakUsage}</small><strong>{peakShare}% <em>{t.ofYourKwh}</em></strong></div></div>
@@ -171,7 +172,7 @@ export function BillAnalyzer() {
                 <div>
                   <p className="total-label">{t.totalDue}</p>
                   <p dir="ltr" className="total-amount mt-2 tabular-nums">
-                    {formatUsd(bill.totalDue)}
+                    <CountUp value={bill.totalDue} />
                   </p>
                   {(bill.previousBalance ?? 0) > 0 && (
                     <p className="total-meta mt-2">{t.includesPrevious.replace("{amount}", formatUsd(bill.previousBalance!))}</p>
@@ -225,7 +226,7 @@ export function BillAnalyzer() {
             <CardContent className="grid gap-5 md:grid-cols-[.8fr_1.2fr] md:items-center">
               <div><p className="eyebrow">{t.quickRead}</p><h2 className="breakdown-title">{t.energyStory}</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">See how your electricity use is distributed across the day. Moving flexible chores out of the evening peak can help lower future bills.</p></div>
               <div className="period-bars" aria-label={`Energy use: ${peakShare}% on peak, ${Math.round(bill.kwhByPeriod.offPeak / totalKwh * 100)}% off peak, ${Math.round(bill.kwhByPeriod.superOffPeak / totalKwh * 100)}% super off peak`}>
-                {[{name:"On peak · 4–9 PM",value:bill.kwhByPeriod.onPeak,color:"#d39130"},{name:"Off peak",value:bill.kwhByPeriod.offPeak,color:"#287963"},{name:"Super off peak",value:bill.kwhByPeriod.superOffPeak,color:"#a9c7aa"}].map((item)=><div className="period-row" key={item.name}><div className="period-label"><span><i style={{background:item.color}} />{item.name}</span><b>{item.value} kWh</b></div><div className="period-track"><span style={{width:`${totalKwh ? item.value/totalKwh*100 : 0}%`,background:item.color}} /></div></div>)}
+                {[{name:"On peak · 4–9 PM",value:bill.kwhByPeriod.onPeak,color:"#f7941d"},{name:"Off peak",value:bill.kwhByPeriod.offPeak,color:"#29a3e0"},{name:"Super off peak",value:bill.kwhByPeriod.superOffPeak,color:"#0b4f9c"}].map((item)=><div className="period-row" key={item.name}><div className="period-label"><span><i style={{background:item.color}} />{item.name}</span><b>{item.value} kWh</b></div><div className="period-track"><span style={{width:`${totalKwh ? item.value/totalKwh*100 : 0}%`,background:item.color}} /></div></div>)}
               </div>
             </CardContent>
           </Card>

@@ -5,10 +5,10 @@ import { Bar, BarChart, CartesianGrid, Cell, ComposedChart, Line, ReferenceArea,
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import type { GridHour, HourCost } from "@/lib/analysis";
 
-const RED = "#dc2626";
-const BLUE = "#2563eb";
-const GREEN = "#16a34a";
-const SLATE = "#64748b";
+const RED = "#f7941d"; // on-peak (SDG&E bills show on-peak in orange)
+const BLUE = "#0067b1";
+const GREEN = "#1fa37a";
+const SLATE = "#6b7f95";
 
 // 4–9 PM = hours 16..20, labels "4 PM".."8 PM"
 const PEAK_START = "4 PM";
