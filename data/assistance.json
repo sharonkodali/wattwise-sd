@@ -1,0 +1,5 @@
+{
+  "_note": "SAMPLE PLACEHOLDER. Person 3/4: replace with current numbers from sdge.com CARE and FERA pages.",
+  "CARE": { "discount": "about 30-35% off electricity, 20% off gas", "apply": "https://www.sdge.com/care", "autoQualify": ["CalFresh", "Medi-Cal", "WIC", "SSI"] },
+  "FERA": { "discount": "about 18% off electricity", "apply": "https://www.sdge.com/fera", "householdMin": 3 }
+}

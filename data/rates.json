@@ -1,0 +1,7 @@
+{
+  "_note": "SAMPLE PLACEHOLDER RATES ($/kWh). Person 3: replace with the current SDG&E TOU-DR1 Total Rates Table values.",
+  "plan": "TOU-DR1",
+  "summer": { "onPeak": 0.60, "offPeak": 0.42, "superOffPeak": 0.30 },
+  "winter": { "onPeak": 0.50, "offPeak": 0.45, "superOffPeak": 0.40 },
+  "careDiscount": 0.35
+}
