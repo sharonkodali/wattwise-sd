@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { friendlyError, generateJson, SDGE_GLOSSARY } from "@/lib/gemini";
 import { billAnalysisJsonSchema, type BillAnalysis } from "@/lib/schemas";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const ALLOWED = ["application/pdf", "image/png", "image/jpeg", "image/webp", "image/heic"];
 

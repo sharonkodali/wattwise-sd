@@ -24,3 +24,5 @@ Glossary:${SDGE_GLOSSARY}`,
     return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
   }
 }
+
+export const maxDuration = 120;

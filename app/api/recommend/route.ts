@@ -19,3 +19,5 @@ never invent new numbers. Mention specific appliances and times (e.g. "run the d
     return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
   }
 }
+
+export const maxDuration = 120;

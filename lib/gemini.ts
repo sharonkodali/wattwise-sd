@@ -1,13 +1,15 @@
 // Gemini client + helper. OWNER: Person 1. Server-only: never import this in a "use client" file.
 import { GoogleGenAI, type Part } from "@google/genai";
 
-export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.8-flash"; // newest Flash model available as of Nov 7, 2026
-// If the main model is overloaded (503) or rate-limited (429), fall back to these in order.
-const FALLBACK_MODELS = ["gemini-3.5-flash", "gemini-flash-latest", "gemini-3.1-flash-lite"];
+// gemini-3.5-flash: ~3s on our sample bill (Nov 7). gemini-3.8-flash was overloaded (100s+ / 503s), so it's not the default.
+export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? "gemini-3.5-flash";
+// If the main model is slow, overloaded (503) or rate-limited (429), fall back to these in order.
+const FALLBACK_MODELS = ["gemini-3.1-flash-lite", "gemini-3.6-flash"];
+const PER_CALL_TIMEOUT_MS = 25_000;
 
 function isRetryable(err: unknown) {
-  const msg = err instanceof Error ? err.message : String(err);
-  return /\b(429|500|503|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded)\b/i.test(msg);
+  const msg = err instanceof Error ? `${err.name} ${err.message}` : String(err);
+  return /\b(429|500|503|504|UNAVAILABLE|RESOURCE_EXHAUSTED|DEADLINE_EXCEEDED|high demand|overloaded|abort|timeout|timed out)/i.test(msg);
 }
 
 /** Turn raw Gemini errors into a short message for the UI. */
@@ -33,8 +35,9 @@ export async function generateJson<T>(opts: {
   const models = [GEMINI_MODEL, ...FALLBACK_MODELS.filter((m) => m !== GEMINI_MODEL)];
   let lastErr: unknown;
   for (const model of models) {
-    // One quick retry per model, then move on to the next model.
-    for (let attempt = 0; attempt < 2; attempt++) {
+    // One quick retry on the main model; fallbacks get one try each.
+    const attempts = model === GEMINI_MODEL ? 2 : 1;
+    for (let attempt = 0; attempt < attempts; attempt++) {
       try {
         const res = await getClient().models.generateContent({
           model,
@@ -44,6 +47,7 @@ export async function generateJson<T>(opts: {
             responseMimeType: "application/json",
             responseJsonSchema: opts.schema,
             temperature: 0.3,
+            abortSignal: AbortSignal.timeout(PER_CALL_TIMEOUT_MS),
           },
         });
         const text = res.text;

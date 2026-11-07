@@ -19,3 +19,5 @@ Keep it simple and friendly. Do NOT change any numbers, enum values, "provider" 
     return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
   }
 }
+
+export const maxDuration = 120;
