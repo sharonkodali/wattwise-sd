@@ -1,32 +1,132 @@
-// POST { stats } (computed by lib/analysis.ts) -> { recommendations[] }. OWNER: Person 3.
-import { NextResponse } from "next/server";
-import { friendlyError, generateJson } from "@/lib/gemini";
-import { recommendationsJsonSchema, type Recommendation } from "@/lib/schemas";
+// app/api/recommend/route.ts
+// POST { season, plan, dailyKwh? } -> { recommendations: Recommendation[], source: "gemini" | "fallback" }
+// The server computes every number with lib/analysis.ts, sends only those numbers to Gemini,
+// then overwrites any dollar amount in Gemini's answer with the computed value.
 
-export async function POST(req: Request) {
-  try {
-    const { stats } = await req.json().catch(() => ({}));
-    if (!stats || typeof stats !== "object" || Object.keys(stats).length === 0) {
-      return NextResponse.json({ error: "stats are required (use usageStats() from lib/analysis.ts)" }, { status: 400 });
-    }
-    const result = await generateJson<{ recommendations: Recommendation[] }>({
-      system: `You are an energy coach for San Diego households on SDG&E time-of-use pricing (on-peak is 4-9 PM).
-Give 3-4 specific, practical recommendations based ONLY on the numbers provided.
-- Dollar amounts: use ONLY figures from the input, and attach each figure to ONE recommendation (never repeat the same
-  figure on two tips). Leave "monthlySavings" empty for tips without a matching input figure.
-- Be realistic: suggest "after 9 PM", "before 4 PM", or using appliance delay-start timers. Never tell people to wake up
-  at night to run appliances.
-- Name specific appliances (dryer, dishwasher, EV charger, AC) and times.
-- Never suggest turning off cooling for older adults or anyone at health risk during hot weather; suggest pre-cooling instead.
-- If "careMonthlySavings" is present, one tip should be checking CARE eligibility at https://www.sdge.com/care.`,
-      parts: [{ text: JSON.stringify(stats) }],
-      schema: recommendationsJsonSchema,
-    });
-    return NextResponse.json(result);
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: friendlyError(err) }, { status: 500 });
-  }
+import { NextResponse } from "next/server";
+import { GoogleGenAI, Type } from "@google/genai";
+import { buildRecommendationInput, money, type Plan, type RecommendationInput, type Season } from "@/lib/analysis";
+
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
+export interface Recommendation {
+  /** Scenario id from lib/analysis, "general_shift", "care", or null for a no-dollar tip. */
+  scenarioId: string | null;
+  title: string;
+  detail: string;
+  /** Always set by our code, never by Gemini. */
+  monthlySavings: number | null;
 }
 
-export const maxDuration = 120;
+// Check AI Studio for the current Flash model ID and set GEMINI_MODEL in Vercel if this one is outdated.
+const MODEL = process.env.GEMINI_MODEL ?? "gemini-flash-latest";
+
+const responseSchema = {
+  type: Type.OBJECT,
+  properties: {
+    recommendations: {
+      type: Type.ARRAY,
+      description: "3 to 5 tips",
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          scenarioId: { type: Type.STRING, nullable: true, description: "id from the input, 'general_shift', 'care', or null" },
+          title: { type: Type.STRING, description: "Short imperative, max 8 words, no dollar amounts" },
+          detail: { type: Type.STRING, description: "1-2 friendly sentences. Use {{savings}} where the monthly dollar amount goes." },
+        },
+        required: ["scenarioId", "title", "detail"],
+        propertyOrdering: ["scenarioId", "title", "detail"],
+      },
+    },
+  },
+  required: ["recommendations"],
+};
+
+function buildPrompt(input: RecommendationInput): string {
+  return `You are WattWise SD, a friendly energy coach for San Diego households on SDG&E's TOU-DR1 time-of-use plan.
+
+Write 3 to 5 specific, practical tips using ONLY the numbers in the JSON below. These numbers were calculated by our code from SDG&E's official rates. Rules:
+- Each tip must be tied to one item: a scenario "id", "general_shift", "care" (only if careMonthlySavings is not null), or null for a tip with no dollar amount (e.g. using power during the cleanest grid hours). At most one null tip.
+- Never write a dollar amount yourself. Put the placeholder {{savings}} in "detail" where the monthly amount belongs; our code fills it in.
+- Prefer the scenarios with the biggest savings. Don't repeat the same appliance twice.
+- Mention the time window to move to (e.g. "after 9 PM", "Saturday morning").
+- Plain language a student or a non-expert can follow. No jargon.
+
+Data:
+${JSON.stringify(input, null, 2)}`;
+}
+
+/** Replace placeholders/any $ figures with the computed amount, so Gemini can't invent numbers. */
+function attachNumbers(raw: { scenarioId: string | null; title: string; detail: string }[], input: RecommendationInput): Recommendation[] {
+  const amounts = new Map<string, number>(input.scenarios.map((s) => [s.id, s.monthlySavings]));
+  amounts.set("general_shift", input.generalShift.monthlySavings);
+  if (input.careMonthlySavings != null) amounts.set("care", input.careMonthlySavings);
+
+  const out: Recommendation[] = [];
+  const seen = new Set<string>();
+  for (const r of raw) {
+    const id = r.scenarioId && r.scenarioId !== "null" ? r.scenarioId : null;
+    if (id && (!amounts.has(id) || seen.has(id))) continue; // unknown or duplicate id: drop
+    if (id) seen.add(id);
+    const amount = id ? amounts.get(id)! : null;
+    const fill = (s: string) =>
+      amount != null ? s.replaceAll("{{savings}}", money(amount)).replace(/\$\d[\d,]*(\.\d+)?/g, money(amount)) : s.replaceAll("{{savings}}", "");
+    if (amount == null && /\$\d/.test(r.detail + r.title)) continue; // no-dollar tip that made up a number: drop
+    out.push({ scenarioId: id, title: fill(r.title).trim(), detail: fill(r.detail).trim(), monthlySavings: amount });
+  }
+  return out.slice(0, 5);
+}
+
+/** Template tips if Gemini is down or rate-limited, so the demo never shows an empty card. */
+function fallback(input: RecommendationInput): Recommendation[] {
+  const tips: Recommendation[] = input.scenarios.slice(0, 3).map((s) => ({
+    scenarioId: s.id,
+    title: s.action,
+    detail: `Saves about ${money(s.monthlySavings)} a month (${money(s.yearlySavings)} a year). Assumes ${s.assumption}.`,
+    monthlySavings: s.monthlySavings,
+  }));
+  if (input.careMonthlySavings != null) {
+    tips.push({
+      scenarioId: "care",
+      title: "Check if you qualify for CARE",
+      detail: `If your household income is under the limit, CARE would cut this bill by about ${money(input.careMonthlySavings)} a month.`,
+      monthlySavings: input.careMonthlySavings,
+    });
+  }
+  return tips;
+}
+
+export async function POST(req: Request) {
+  let body: { season?: Season; plan?: Plan; dailyKwh?: number };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  const season: Season = body.season === "summer" ? "summer" : "winter";
+  const plan: Plan = body.plan === "care" ? "care" : "standard";
+  const dailyKwh = typeof body.dailyKwh === "number" && body.dailyKwh > 0 && body.dailyKwh < 500 ? body.dailyKwh : undefined;
+
+  const input = buildRecommendationInput(season, plan, dailyKwh);
+
+  if (!process.env.GEMINI_API_KEY) {
+    return NextResponse.json({ recommendations: fallback(input), source: "fallback" });
+  }
+
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const res = await ai.models.generateContent({
+      model: MODEL,
+      contents: buildPrompt(input),
+      config: { responseMimeType: "application/json", responseSchema, temperature: 0.4 },
+    });
+    const parsed = JSON.parse(res.text ?? "{}") as { recommendations?: { scenarioId: string | null; title: string; detail: string }[] };
+    const recs = attachNumbers(parsed.recommendations ?? [], input);
+    if (recs.length < 3) throw new Error(`Only ${recs.length} usable tips`);
+    return NextResponse.json({ recommendations: recs, source: "gemini" });
+  } catch (err) {
+    console.error("[recommend] Gemini failed, using fallback:", err);
+    return NextResponse.json({ recommendations: fallback(input), source: "fallback" });
+  }
+}
