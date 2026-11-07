@@ -33,12 +33,21 @@ Already found during manual testing on the live site (before automated tests):
 - Empty request bodies leaked raw Gemini errors. Fixed with input validation and `friendlyError`.
 - Prompt advised an El Cajon retiree to turn the AC off at peak. Fixed with a heat-safety rule.
 
+End-to-end demo walkthrough on the live site (Nov 7, with SDG&E's public sample bill + our sample):
+- The total due rendered at 11px: the amount was both `p:nth-child(2)` and `p:last-child`, and the 11px footer rule won. Fixed with explicit classes.
+- Bills with an unpaid previous balance falsely showed "charges don't add up" ($168.42 charges + $18.00 carried over = $186.42 due). Fixed: Gemini now extracts `previousBalance` and the check subtracts it.
+- Gemini returned "busy" on every model once during testing. Fixed: the page retries once, and the two demo bills fall back to their last good result (`data/demo-cache.json`, response has `cached: true`).
+- Upload box said "Up to 15 MB" but Vercel's limit is 4.5 MB. Fixed: 4 MB copy, large photos are shrunk in the browser, and plain-text 413/504 errors show a clear message.
+- Only Gemini's text was translated; labels stayed English. Fixed: `lib/ui-labels.ts` (6 languages).
+- SDG&E public sample (gas + electric, 3 pages): 14 charges, kWh split 179/322/256 exact, $228.91 of $229.52 found (the $0.61 "Other" line is on page 4, not in the file).
+
 Add new ones below with the Copilot log row that found them:
 
 ## End-to-end check before the demo (manual)
 
-- [ ] Upload `public/sample-bill.pdf` on the live site → all charges, total matches
+- [x] Upload `public/sample-bill.pdf` on the live site → all charges, total matches (Nov 7)
+- [x] Upload SDG&E's public sample bill PDF → 14 charges, total matches (Nov 7)
 - [ ] Upload a real phone photo of a bill
-- [ ] Switch languages → text changes, $ unchanged
+- [x] Switch languages → text and labels change, $ unchanged (Spanish, Nov 7)
 - [ ] Tab 2 charts render on a phone; tips load
 - [ ] Tab 3: run the 3 example households
