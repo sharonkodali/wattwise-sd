@@ -38,6 +38,13 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
   const [tips, setTips] = useState<Recommendation[] | null>(null);
   const [tipsLoading, setTipsLoading] = useState(true);
   const [tipsError, setTipsError] = useState<string | null>(null);
+  const [dismissedTips, setDismissedTips] = useState<Set<string>>(() => new Set());
+  const rankedTips = useMemo(
+    () => [...(tips ?? [])]
+      .filter((tip) => !dismissedTips.has(`${tip.scenarioId ?? "general"}-${tip.title}`))
+      .sort((a, b) => (b.monthlySavings ?? -1) - (a.monthlySavings ?? -1)),
+    [tips, dismissedTips],
+  );
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -51,9 +58,11 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
         if (!r.ok) throw new Error((await r.json().catch(() => null))?.error ?? `HTTP ${r.status}`);
         return r.json() as Promise<{ recommendations: Recommendation[] }>;
       })
-      .then((d) => setTips(d.recommendations))
-      .catch((e) => {
-        if (e.name !== "AbortError") setTipsError("Couldn't load tips right now.");
+      .then((d) => {
+        if (!ctrl.signal.aborted) setTips(d.recommendations);
+      })
+      .catch(() => {
+        if (!ctrl.signal.aborted) setTipsError("Couldn't load tips right now.");
       })
       .finally(() => {
         if (!ctrl.signal.aborted) setTipsLoading(false);
@@ -64,16 +73,16 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
   return (
     <div className="space-y-6">
       {/* Tips */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Your top savings moves</CardTitle>
-          <CardDescription>Dollar amounts are calculated from SDG&amp;E rates. Gemini writes the advice.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <section aria-labelledby="next-moves-title" className="space-y-5">
+        <div>
+          <h2 id="next-moves-title" className="text-2xl font-semibold tracking-tight text-foreground">Your next moves</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Choose a move to see why it could help.</p>
+        </div>
+        <div className="divide-y divide-border">
           {tipsLoading && <p className="text-sm text-muted-foreground">Finding your best savings…</p>}
           {tipsError && <p className="text-sm text-destructive">{tipsError}</p>}
           {!tipsLoading &&
-            tips?.map((t, i) => (
+            rankedTips.map((t, i) => (
               <RecommendationDetailsDialog
                 key={`${t.scenarioId ?? "general"}-${t.title}`}
                 recommendation={t}
@@ -81,16 +90,40 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
                 season={season}
                 plan={plan}
                 dailyKwh={dailyKwh}
+                onDismiss={() => setDismissedTips((current) => new Set(current).add(`${t.scenarioId ?? "general"}-${t.title}`))}
               />
             ))}
-        </CardContent>
-        <CardFooter className="text-xs text-muted-foreground">Estimates, not financial advice. Appliance usage is a typical estimate.</CardFooter>
-      </Card>
+          {!tipsLoading && !tipsError && rankedTips.length === 0 && (
+            <p className="py-4 text-sm text-muted-foreground">No recommendations are available right now.</p>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground">Savings are estimates based on SDG&amp;E rates and typical appliance use, not a guarantee.</p>
+      </section>
 
       {/* Controls */}
       <div className="flex flex-wrap gap-2">
-        <Toggle value={season} onChange={(value) => { setTipsLoading(true); setTipsError(null); setSeason(value); }} options={[["summer", "Summer (Jun–Oct)"], ["winter", "Winter (Nov–May)"]]} />
-        <Toggle value={plan} onChange={(value) => { setTipsLoading(true); setTipsError(null); setPlan(value); }} options={[["standard", "Standard"], ["care", "CARE pricing"]]} />
+        <Toggle
+          value={season}
+          onChange={(value) => {
+            if (value !== season) {
+              setTipsLoading(true);
+              setTipsError(null);
+              setSeason(value);
+            }
+          }}
+          options={[["summer", "Summer (Jun–Oct)"], ["winter", "Winter (Nov–May)"]]}
+        />
+        <Toggle
+          value={plan}
+          onChange={(value) => {
+            if (value !== plan) {
+              setTipsLoading(true);
+              setTipsError(null);
+              setPlan(value);
+            }
+          }}
+          options={[["standard", "Standard"], ["care", "CARE pricing"]]}
+        />
       </div>
 
       {/* Headline numbers */}
@@ -167,11 +200,26 @@ function Stat({ big, text }: { big: string; text: string }) {
   );
 }
 
-function Toggle<T extends string>({ value, onChange, options }: { value: T; onChange: (v: T) => void; options: [T, string][] }) {
+function Toggle<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T;
+  onChange: (value: T) => void;
+  options: [T, string][];
+}) {
   return (
-    <div className="inline-flex rounded-lg border p-1">
+    <div className="inline-flex rounded-lg border p-1" role="group">
       {options.map(([v, label]) => (
-        <Button key={v} size="sm" variant={value === v ? "default" : "ghost"} onClick={() => onChange(v)}>
+        <Button
+          key={v}
+          type="button"
+          size="sm"
+          variant={value === v ? "default" : "ghost"}
+          aria-pressed={value === v}
+          onClick={() => onChange(v)}
+        >
           {label}
         </Button>
       ))}

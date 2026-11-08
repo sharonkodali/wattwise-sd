@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -30,9 +31,10 @@ type Props = {
   season: Season;
   plan: Plan;
   dailyKwh?: number;
+  onDismiss: () => void;
 };
 
-export function RecommendationDetailsDialog({ recommendation, rank, season, plan, dailyKwh }: Props) {
+export function RecommendationDetailsDialog({ recommendation, rank, season, plan, dailyKwh, onDismiss }: Props) {
   const isCare = recommendation.scenarioId === "care";
   const isGeneralShift = recommendation.scenarioId === "general_shift";
   const scenario = recommendation.scenarioId && !isCare && !isGeneralShift
@@ -72,20 +74,33 @@ export function RecommendationDetailsDialog({ recommendation, rank, season, plan
   const careSavings = isCare ? careMonthlySavings(season, dailyKwh) : null;
 
   return (
-    <Dialog>
-      <DialogTrigger className="flex w-full items-center gap-3 rounded-lg border bg-card p-3 text-left text-card-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-        <span className="min-w-0 flex-1">
-          <span className="block font-medium">{recommendation.title}</span>
-          <span className="mt-1 block text-sm text-muted-foreground">{recommendation.detail}</span>
-          <span className="mt-2 block text-xs font-medium text-primary">View why this was recommended</span>
-        </span>
-        {recommendation.monthlySavings != null && (
-          <span className="shrink-0 rounded-md bg-secondary px-2 py-1 text-sm font-semibold text-secondary-foreground">
-            {money(recommendation.monthlySavings)}/mo
+    <div className="flex items-start gap-2">
+      <Dialog>
+        <DialogTrigger className="group flex min-w-0 flex-1 items-start gap-3 bg-transparent py-4 text-left text-foreground transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset">
+          <span
+            aria-label={`Priority ${rank}${rank === 1 ? ", highest estimated savings" : ""}`}
+            className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md text-sm font-bold ${
+              rank === 1
+                ? "bg-destructive/10 text-destructive"
+                : rank === 2
+                  ? "bg-accent text-accent-foreground"
+                  : "bg-muted text-muted-foreground"
+            }`}
+          >
+            {rank}
           </span>
-        )}
-      </DialogTrigger>
-      <DialogContent>
+          <span className="min-w-0 flex-1 pt-0.5">
+            <span className="block text-base font-semibold leading-snug">{recommendation.title}</span>
+            <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">{recommendation.detail}</span>
+            <span className="mt-2 block text-xs font-medium text-primary group-hover:underline">View details</span>
+          </span>
+          {recommendation.monthlySavings != null && (
+            <span className="shrink-0 rounded-md bg-emerald-50 px-2.5 py-1.5 text-sm font-semibold tabular-nums text-emerald-800">
+              {money(recommendation.monthlySavings)}/mo
+            </span>
+          )}
+        </DialogTrigger>
+        <DialogContent>
         <p className="mb-1 text-xs text-muted-foreground">
           Recommendation {rank} · {season} · {plan === "care" ? "CARE" : "Standard"} plan
         </p>
@@ -196,7 +211,17 @@ export function RecommendationDetailsDialog({ recommendation, rank, season, plan
             )}
           </section>
         )}
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+      <button
+        type="button"
+        aria-label={`Dismiss ${recommendation.title}`}
+        title="Dismiss recommendation"
+        onClick={onDismiss}
+        className="mt-3 inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <X size={16} aria-hidden="true" />
+      </button>
+    </div>
   );
 }
