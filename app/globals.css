@@ -360,3 +360,94 @@
   .site-footer-inner { flex-direction: column; }
   .footer-note { text-align: left; }
 }
+
+/* ---------------- Recommendation evidence dialog ---------------- */
+.recommendation-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+.recommendation-row:hover {
+  transform: translateY(-1px);
+  border-color: #9dc6e0;
+  box-shadow: 0 5px 16px rgba(0,74,130,.08);
+}
+.recommendation-row:focus-visible {
+  outline: 3px solid rgba(41,163,224,.55);
+  outline-offset: 2px;
+}
+.recommendation-rank {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--sky-soft);
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 800;
+}
+.recommendation-row:first-child .recommendation-rank {
+  background: var(--peak-soft);
+  color: #a65300;
+}
+.recommendation-copy { display: grid; min-width: 0; flex: 1; gap: 4px; }
+.recommendation-title { color: var(--ink); font-size: 14px; font-weight: 700; }
+.recommendation-detail { color: var(--text-soft); font-size: 13px; line-height: 1.45; }
+.recommendation-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 3px; color: var(--blue); font-size: 12px; font-weight: 700; }
+.recommendation-link svg { transform: rotate(-45deg); }
+.recommendation-savings { flex: 0 0 auto; color: #087c5b; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.recommendation-savings small { margin-left: 2px; color: var(--text-soft); font-size: 11px; font-weight: 600; }
+.dialog-backdrop { position: fixed; z-index: 80; inset: 0; background: rgba(3,24,44,.58); backdrop-filter: blur(3px); }
+.dialog-content {
+  position: fixed;
+  z-index: 81;
+  top: 50%;
+  left: 50%;
+  width: min(620px, calc(100vw - 32px));
+  max-height: min(82vh, 760px);
+  overflow-y: auto;
+  transform: translate(-50%,-50%);
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 24px 80px rgba(0,24,48,.25);
+}
+.dialog-close { position: absolute; top: 17px; right: 17px; display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 9px; background: var(--page); color: var(--text-soft); cursor: pointer; }
+.dialog-close:hover { background: var(--sky-soft); color: var(--blue); }
+.dialog-close:focus-visible { outline: 3px solid rgba(41,163,224,.55); outline-offset: 2px; }
+.dialog-kicker { padding-right: 42px; color: var(--blue); font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.dialog-title { margin: 9px 42px 0 0; color: var(--ink); font-size: 24px; font-weight: 800; line-height: 1.2; }
+.dialog-description { margin-top: 8px; color: var(--text-soft); font-size: 14px; line-height: 1.55; }
+.dialog-evidence { margin-top: 22px; padding: 17px; border-radius: 12px; background: var(--page); }
+.dialog-evidence h3, .dialog-sources h3 { margin: 0 0 8px; color: var(--ink); font-size: 14px; font-weight: 800; }
+.dialog-evidence p { margin: 0; color: var(--text); font-size: 13px; line-height: 1.55; }
+.dialog-evidence .dialog-calculation { margin-top: 12px; padding: 11px 12px; border-left: 3px solid var(--peak); border-radius: 4px 8px 8px 4px; background: #fff; color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+.dialog-evidence .dialog-caveat { margin-top: 10px; color: var(--text-soft); font-size: 11px; }
+.dialog-grid-hours { display: grid; gap: 7px; margin: 12px 0 0; padding: 0; list-style: none; }
+.dialog-grid-hours li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; border-radius: 8px; background: #fff; color: var(--text); font-size: 12px; }
+.dialog-grid-hours strong { color: var(--blue); }
+.dialog-sources { margin-top: 19px; }
+.dialog-sources ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.dialog-sources a { display: inline-flex; align-items: center; gap: 6px; color: var(--blue); font-size: 12px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.dialog-sources p { margin: 9px 0 0; color: var(--text-soft); font-size: 11px; line-height: 1.5; }
+
+@media (max-width: 640px) {
+  .recommendation-row { align-items: flex-start; gap: 10px; padding: 12px 10px; }
+  .recommendation-rank { width: 30px; height: 30px; }
+  .recommendation-title { font-size: 13px; }
+  .recommendation-detail { font-size: 12px; }
+  .recommendation-savings { padding-top: 4px; font-size: 14px; }
+  .dialog-content { padding: 23px 18px; }
+}

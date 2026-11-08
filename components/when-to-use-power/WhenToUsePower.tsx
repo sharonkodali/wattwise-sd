@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { RecommendationDetailsDialog } from "@/components/RecommendationDetailsDialog";
 import {
   SOURCES,
   careMonthlySavings,
@@ -73,17 +74,14 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
           {tipsError && <p className="text-sm text-destructive">{tipsError}</p>}
           {!tipsLoading &&
             tips?.map((t, i) => (
-              <div key={i} className="flex items-start justify-between gap-4 rounded-lg border p-3">
-                <div>
-                  <p className="font-medium">{t.title}</p>
-                  <p className="text-sm text-muted-foreground">{t.detail}</p>
-                </div>
-                {t.monthlySavings != null && (
-                  <span className="shrink-0 rounded-md bg-green-100 px-2 py-1 text-sm font-semibold text-green-800 dark:bg-green-900/40 dark:text-green-300">
-                    {money(t.monthlySavings)}/mo
-                  </span>
-                )}
-              </div>
+              <RecommendationDetailsDialog
+                key={`${t.scenarioId ?? "general"}-${t.title}`}
+                recommendation={t}
+                rank={i + 1}
+                season={season}
+                plan={plan}
+                dailyKwh={dailyKwh}
+              />
             ))}
         </CardContent>
         <CardFooter className="text-xs text-muted-foreground">Estimates, not financial advice. Appliance usage is a typical estimate.</CardFooter>
