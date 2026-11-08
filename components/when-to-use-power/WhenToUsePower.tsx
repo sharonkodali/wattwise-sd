@@ -62,6 +62,33 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
 
   return (
     <div className="space-y-6">
+      {/* Tips */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Your top savings moves</CardTitle>
+          <CardDescription>Dollar amounts are calculated from SDG&amp;E rates. Gemini writes the advice.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {tipsLoading && <p className="text-sm text-muted-foreground">Finding your best savings…</p>}
+          {tipsError && <p className="text-sm text-destructive">{tipsError}</p>}
+          {!tipsLoading &&
+            tips?.map((t, i) => (
+              <div key={i} className="flex items-start justify-between gap-4 rounded-lg border p-3">
+                <div>
+                  <p className="font-medium">{t.title}</p>
+                  <p className="text-sm text-muted-foreground">{t.detail}</p>
+                </div>
+                {t.monthlySavings != null && (
+                  <span className="shrink-0 rounded-md bg-green-100 px-2 py-1 text-sm font-semibold text-green-800 dark:bg-green-900/40 dark:text-green-300">
+                    {money(t.monthlySavings)}/mo
+                  </span>
+                )}
+              </div>
+            ))}
+        </CardContent>
+        <CardFooter className="text-xs text-muted-foreground">Estimates, not financial advice. Appliance usage is a typical estimate.</CardFooter>
+      </Card>
+
       {/* Controls */}
       <div className="flex flex-wrap gap-2">
         <Toggle value={season} onChange={(value) => { setTipsLoading(true); setTipsError(null); setSeason(value); }} options={[["summer", "Summer (Jun–Oct)"], ["winter", "Winter (Nov–May)"]]} />
@@ -94,33 +121,6 @@ export function WhenToUsePower({ dailyKwh }: { dailyKwh?: number }) {
           Rates: {SOURCES.rates}. Usage: {SOURCES.usage}
           {dailyKwh ? `, scaled to ${dailyKwh.toFixed(1)} kWh/day from your bill` : ""}.
         </CardFooter>
-      </Card>
-
-      {/* Tips */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Your top savings moves</CardTitle>
-          <CardDescription>Dollar amounts are calculated from SDG&amp;E rates. Gemini writes the advice.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {tipsLoading && <p className="text-sm text-muted-foreground">Finding your best savings…</p>}
-          {tipsError && <p className="text-sm text-destructive">{tipsError}</p>}
-          {!tipsLoading &&
-            tips?.map((t, i) => (
-              <div key={i} className="flex items-start justify-between gap-4 rounded-lg border p-3">
-                <div>
-                  <p className="font-medium">{t.title}</p>
-                  <p className="text-sm text-muted-foreground">{t.detail}</p>
-                </div>
-                {t.monthlySavings != null && (
-                  <span className="shrink-0 rounded-md bg-green-100 px-2 py-1 text-sm font-semibold text-green-800 dark:bg-green-900/40 dark:text-green-300">
-                    {money(t.monthlySavings)}/mo
-                  </span>
-                )}
-              </div>
-            ))}
-        </CardContent>
-        <CardFooter className="text-xs text-muted-foreground">Estimates, not financial advice. Appliance usage is a typical estimate.</CardFooter>
       </Card>
 
       {/* Chart 2 */}
