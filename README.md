@@ -1,5 +1,7 @@
 # WattWise SD
 
+[![ci](https://github.com/sharonkodali/wattwise-sd/actions/workflows/ci.yml/badge.svg)](https://github.com/sharonkodali/wattwise-sd/actions/workflows/ci.yml) · [Live demo](https://wattwise-sd.vercel.app)
+
 **Understand your SDG&E bill, find the expensive hours, and keep more of your money.**
 
 Built at Hack for Humanity @ AI Collective UC San Diego (Nov 7, 2026).
